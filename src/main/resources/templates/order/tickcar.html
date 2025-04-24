@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電影訂票座位選擇</title>
+
+<!-- Bootstrap & 外部 CSS -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css" />
+<link rel="stylesheet" href="/css/index.css" />
+<link rel="stylesheet" href="/css/footer.css" />
+<link rel="stylesheet" th:href="@{tickcss/car.css}">
+<link rel="stylesheet" href="/css/tickStyleFix.css" />
+
+</head>
+
+<body>
+	<th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+
+	<div class="main-container">
+		<form action="ordercheck" method="get" id="yourFormId"
+			onsubmit="return validateForm();">
+			<div class="container overflow-auto">
+				<div class="d-flex flex-nowrap align-items-stretch gap-2">
+					<!-- 日期 -->
+					<input type="text" id="datepicker"
+						class="form-control bg-dark text-white border-secondary"
+						placeholder="日期" required readonly>
+
+					<!-- 電影 -->
+					<select id="moviename" name="movieid"
+						class="form-select bg-dark text-white border-secondary" required>
+						<option value="">選日期在選電影</option>
+					</select>
+
+					<!-- 場次 -->
+					<select id="time" name="showtimeid"
+						class="form-select bg-dark text-white border-secondary" required>
+						<option value="">場次</option>
+					</select>
+
+					<!-- 票種 -->
+					<select id="type" name="tickettypeid"
+						class="form-select bg-dark text-white border-secondary" required>
+						<option value="">票種</option>
+					</select>
+
+					<!-- 單價 -->
+					<input name="onemoney" placeholder="單價" id="money"
+						class="form-control bg-dark text-white border-secondary"
+						type="text">
+
+					<!-- 確認按鈕（加 form-control 確保高度一致） -->
+					<button type="submit" class="btn btn-primary form-control">確認</button>
+				</div>
+			</div>
+		</form>
+
+
+		<div class="cinema container">
+			<div class="screen">螢幕</div>
+			<div class="seating-chart" id="seating-chart">
+				<!-- Row A -->
+				<!-- Row A -->
+				<div class="row">
+					<span class="seat-label">A</span>
+					<div class="seat available" data-seat-id="A1">1</div>
+					<div class="seat available" data-seat-id="A2">2</div>
+					<div class="seat available" data-seat-id="A3">3</div>
+					<!-- Initially available -->
+					<div class="seat available" data-seat-id="A4">4</div>
+					<div class="seat available" data-seat-id="A5">5</div>
+					<div class="seat available" data-seat-id="A6">6</div>
+					<div class="seat available" data-seat-id="A7">7</div>
+					<!-- Initially available -->
+					<div class="seat available" data-seat-id="A8">8</div>
+					<div class="seat available" data-seat-id="A9">9</div>
+					<div class="seat available" data-seat-id="A10">10</div>
+				</div>
+				<!-- Row B -->
+				<div class="row">
+					<span class="seat-label">B</span>
+					<div class="seat available" data-seat-id="B1">1</div>
+					<div class="seat available" data-seat-id="B2">2</div>
+					<div class="seat available" data-seat-id="B3">3</div>
+					<!-- Initially available -->
+					<div class="seat available" data-seat-id="B4">4</div>
+					<div class="seat available" data-seat-id="B5">5</div>
+					<div class="seat available" data-seat-id="B6">6</div>
+					<div class="seat available" data-seat-id="B7">7</div>
+					<!-- Initially available -->
+					<div class="seat available" data-seat-id="B8">8</div>
+					<div class="seat available" data-seat-id="B9">9</div>
+					<div class="seat available" data-seat-id="B10">10</div>
+				</div>
+				<!-- ... C, D, E 排，依此類推 ... -->
+				<!-- Row C -->
+				<div class="row">
+					<span class="seat-label">C</span>
+					<div class="seat available" data-seat-id="C1">1</div>
+					<div class="seat available" data-seat-id="C2">2</div>
+					<div class="seat available" data-seat-id="C3">3</div>
+					<div class="seat available" data-seat-id="C4">4</div>
+					<div class="seat available" data-seat-id="C5">5</div>
+					<div class="seat available" data-seat-id="C6">6</div>
+					<div class="seat available" data-seat-id="C7">7</div>
+					<div class="seat available" data-seat-id="C8">8</div>
+					<div class="seat available" data-seat-id="C9">9</div>
+					<div class="seat available" data-seat-id="C10">10</div>
+				</div>
+				<!-- Row D -->
+				<div class="row">
+					<span class="seat-label">D</span>
+					<div class="seat available" data-seat-id="D1">1</div>
+					<div class="seat available" data-seat-id="D2">2</div>
+					<div class="seat available" data-seat-id="D3">3</div>
+					<div class="seat available" data-seat-id="D4">4</div>
+					<div class="seat available" data-seat-id="D5">5</div>
+					<div class="seat available" data-seat-id="D6">6</div>
+					<div class="seat available" data-seat-id="D7">7</div>
+					<div class="seat available" data-seat-id="D8">8</div>
+					<div class="seat available" data-seat-id="D9">9</div>
+					<div class="seat available" data-seat-id="D10">10</div>
+				</div>
+				<!-- Row E -->
+				<div class="row">
+					<span class="seat-label">E</span>
+					<div class="seat available" data-seat-id="E1">1</div>
+					<div class="seat available" data-seat-id="E2">2</div>
+					<div class="seat available" data-seat-id="E3">3</div>
+					<div class="seat available" data-seat-id="E4">4</div>
+					<div class="seat available" data-seat-id="E5">5</div>
+					<div class="seat available" data-seat-id="E6">6</div>
+					<div class="seat available" data-seat-id="E7">7</div>
+					<div class="seat available" data-seat-id="E8">8</div>
+					<div class="seat available" data-seat-id="E9">9</div>
+					<div class="seat available" data-seat-id="E10">10</div>
+				</div>
+
+
+
+				<ul class="legend">
+					<li>
+						<div class="ok"></div> <small class="da">可選 (綠)</small>
+					</li>
+					<li>
+						<div class="sele"></div> <small class="da">已選 (藍)</small>
+					</li>
+					<li>
+						<div class="red"></div> <small class="da">已佔用 (紅)</small>
+					</li>
+				</ul>
+
+
+
+
+				<div class="summary">
+					<p class="da">
+						已選擇 <span id="count">0</span> 個座位
+					</p>
+					<p class="da">
+						總金額: $<span id="total">0</span>
+					</p>
+					<!-- 可以加一個確認按鈕 -->
+					<!-- <button>確認訂票</button> -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+	<!-- JS Scripts -->
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
+	<script th:inline="javascript" src="/tickjs/car.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,77 @@
+@charset "UTF-8";
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: black;
+  color: white;
+  padding-top: 80px;
+}
+
+.sidebar {
+  background-color: #121212;
+  color: white;
+  width: 250px;
+  min-height: 100vh;
+}
+
+.sidebar ul li {
+  color: white;
+}
+
+.sidebar button,
+.sidebar .nav-link {
+  font-size: 15px;
+  color: white;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px 12px;
+  font-weight: normal;
+  font-family: inherit;
+}
+
+.sidebar .nav-link:hover,
+.sidebar button:hover {
+  color: #00b4d8;
+}
+
+.sidebar button:focus,
+.sidebar button:active,
+.sidebar .nav-link:focus,
+.sidebar .nav-link:active {
+  outline: none;
+  box-shadow: none;
+  font-weight: normal;
+}
+
+.sidebar .collapse .nav-link {
+  padding-left: 20px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.memberDetail{
+  background-color: #1e1e1e;
+  color: white;
+  border-radius: 10px;
+}
+
+.form-control {
+  background-color: #2c2c2c;
+  color: white;
+  border: 1px solid #444;
+}
+
+.form-control::placeholder {
+  color: #aaa;
+}
+
+.btn-ticket {
+  background-color: #0067b8;
+  color: white;
+  border: none;
+}
+
+.btn-ticket:hover {
+  background-color: #005aa3;
+}

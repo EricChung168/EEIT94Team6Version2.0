@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirect to ECPay....</title>
+</head>
+<body>
+  <h3>正在導向綠界 ECPay 付款頁面，請稍候...</h3>
+
+  <form id="ecpay-form" method="post"
+        action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">
+        
+    <input type="hidden" name="MerchantID" th:value="${merchantID}" />
+    <input type="hidden" name="MerchantTradeNo" th:value="${tradeNo}" />
+    <input type="hidden" name="MerchantTradeDate" th:value="${tradeDate}" />
+    <input type="hidden" name="PaymentType" value="aio" />
+    <input type="hidden" name="TotalAmount" th:value="${total}" />
+    <input type="hidden" name="TradeDesc" value="購物車測試" />
+    <input type="hidden" name="ItemName" value="訂單商品" />
+    <input type="hidden" name="ChoosePayment" value="ALL" />
+    <input type="hidden" name="ReturnURL" th:value="${returnURL}" />
+    <input type="hidden" name="ClientBackURL" th:value="${clientBackURL}" />
+    <input type="hidden" name="NeedExtraPaidInfo" value="N" />
+    <input type="hidden" name="CheckMacValue" th:value="${checkMacValue}" />
+
+
+    <button type="submit" hidden>送出</button>
+  </form>
+
+  <script>
+    document.getElementById("ecpay-form").submit();
+  </script>
+</body>
+</html>

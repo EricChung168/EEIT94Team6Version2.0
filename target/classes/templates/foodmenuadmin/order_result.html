@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>查詢結果</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h4 class="mb-4">📱 手機號碼：<strong th:text="${phone}"></strong> 的訂單</h4>
+
+    <div th:if="${#lists.isEmpty(orders)}">
+        <div class="alert alert-warning">查無訂單資料</div>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(orders)}">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+            <tr>
+                <th>訂單編號</th>
+                <th>訂單時間</th>
+                <th>總金額</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.orderId}"></td>
+                <td th:text="${order.formattedTime}"></td>
+                <td>$<span th:text="${order.totalAmount}"></span></td>
+                <td><a class="btn btn-sm btn-outline-primary" th:href="@{'/admin/orders/detail/' + ${order.orderId}}">查看明細</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a href="/admin/orders/search" class="btn btn-secondary mt-3">返回查詢</a>
+</div>
+</body>
+</html>

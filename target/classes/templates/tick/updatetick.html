@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>更新訂票</title>
+
+	<style>
+		body {
+			font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+				Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica,
+				Arial, sans-serif;
+		}
+
+		#success_message {
+			display: none;
+		}
+
+		#datepicker {
+			position: relative;
+			z-index: 1000000;
+		}
+
+		.ud {
+			pointer-events: none;
+			background: #fff !important;
+		}
+
+		html {
+			font-size: 16px;
+		}
+	</style>
+	<!--[if lt IE 9]>       
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>       
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>     
+  <![endif]-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+		integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+	<!-- <link rel="stylesheet" href="/ui/jquery-ui-1.14.1.custom/jquery-ui.js"> -->
+	<link th:href="@{/cssboo/bootstrap.min.css}" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+	<script>
+
+	</script>
+</head>
+
+<body>
+	<div class="container">
+
+		<form class="well form-horizontal" action="Updatea" method="post" id="contact_form">
+			<fieldset>
+
+				<!-- Form Name -->
+				<legend>修改訂票</legend>
+
+				<!-- Text input-->
+				<input name="tickid" type="hidden" th:value="${tickinfo.tickid}">
+				<div class="form-group">
+					<label class="col-md-4 control-label">訂單編號</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-clipboard-list"></i></span> <input
+								name="orderid" placeholder="訂單編號" class="form-control ud" type="text"
+								th:value="${tickinfo.orderid}">
+
+						</div>
+					</div>
+				</div>
+
+				<!-- Text input-->
+
+				<div class="form-group">
+					<label class="col-md-4 control-label">會員</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-user"></i></span> <input
+								name="memberId" placeholder="會員" class="form-control ud" type="text"
+								th:value="${tickinfo.memberId}">
+						</div>
+					</div>
+				</div>
+
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label">日期</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-calendar-days"></i></span> <input
+								type="text" id="datepicker" class="form-control" placeholder="日期"
+								th:value="${tickinfo.showtimedate}">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-4 control-label">場次</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-clock"></i></span> <select
+								name="showtimeid" class="form-control selectpicker" id="time">
+								<option value=" ">場次</option>
+
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-md-4 control-label">電影名稱</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-film"></i></span> <select
+								name="movieid" class="form-control selectpicker" id="moviename">
+								<option value=" ">電影</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label">廳</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-house"></i></span>
+							<input class="form-control selectpicker ud" id="halls" name="hallid" value=""
+								placeholder="日期">
+
+
+
+							</input>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="form-group">
+					<label class="col-md-4 control-label">座位</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-chair"></i></span> <select
+								name="seatid" class="form-control selectpicker" id="seat">
+								<option value="">座位</option>
+
+
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- Text input-->
+				<div class="form-group">
+					<label class="col-md-4 control-label">票種</label>
+					<div class="col-md-4 selectContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-ticket"></i></span> <select
+								name="tickettypeid" class="form-control selectpicker" id="type">
+								<option value=" ">票種</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+
+
+				<!-- Text input-->
+
+
+				<!-- Select Basic -->
+
+
+				<div class="form-group">
+					<label class="col-md-4 control-label">單價</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa-solid fa-coins"></i></span> <input
+								name="onemoney" placeholder="單價" class="form-control" type="text" id="money">
+						</div>
+					</div>
+				</div>
+				<!-- Text input-->
+
+				<div class="form-group">
+					<label class="col-md-4 control-label">是否付款</label>
+					<div class="col-md-4 inputGroupContainer">
+						<div class="input-group">
+
+
+							<span class="input-group-addon"><i class="fa-solid fa-money-bill-wave"></i></span>
+							<select name="payout" class="form-control selectpicker">
+								<option value="">是否付款</option>
+								<option th:value="Y" th:selected="${tickinfo.payout == 'Y'}">已付</option>
+								<option th:value="N" th:selected="${tickinfo.payout == 'N'}">未付</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- Button -->
+				<div class="form-group">
+					<label class="col-md-4 control-label"></label>
+					<div class="col-md-4">
+						<button class="btn btn-warning" id="seed">
+							Send <i class="fa-solid fa-paper-plane"></i>
+						</button>
+					</div>
+				</div>
+
+			</fieldset>
+		</form>
+	</div>
+	<!-- /.container -->
+	<!-- <script src="https://code.jquery.com/jquery-3.7.1.js"></script> -->
+	<!-- <script src="js/bootstrap.min.js"></script> -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script> -->
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
+	<script th:inline="javascript">
+		$(function () {
+			$("#datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
+			$("#from-datepicker").on("change", function () {
+				var fromdate = $(this).val();
+				alert(fromdate);
+			});
+			//點選日期改時間
+			$("#datepicker").on("change", function () {
+				let selectdate = $("#datepicker").val();
+				console.log(selectdate)
+				$("#time").empty();
+				$.ajax({
+					url: '/booktick/time/' + selectdate,
+
+					dataType: 'json',
+					type: 'post',
+					contentType: 'application/json',
+					success: function (respones) {
+						$('#time').append(`<option value="">場次</option>`);
+						$.each(respones, function (i, e) {
+
+							$('#time').append(`<option value="${e.showtimeid}">${e.showtime}</option>`)
+						})
+					}
+
+				})
+			});
+			//ready畫面加載預設時間
+			$(document).ready(function () {
+				let selectdate = $("#datepicker").val();
+				$("#time").empty();
+				$.ajax({
+					url: '/booktick/time/' + selectdate,
+
+					dataType: 'json',
+					type: 'post',
+					contentType: 'application/json',
+					success: function (respones) {
+						$('#time').append(`<option value="">場次</option>`);
+						$.each(respones, function (i, e) {
+							let tickshow =/*[[${tickinfo.showtimeid}]]*/''
+							//console.log(tickshow)
+
+							let selectshow = (tickshow == e.showtimeid) ? 'selected' : ''
+							let time = e.showtime.split('.')[0]
+							$('#time').append(`<option value="${e.showtimeid}" ${selectshow} >${time}</option>`)
+						})
+
+					}
+
+				})
+			});
+			///
+			//廳
+			function name() {
+				$('#hallid').empty();
+				let selectmovie = $('#moviename').val();
+
+				$.ajax({
+					url: '/booktick/name',
+					data: { nameid: selectmovie },
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						console.log(respones);
+
+						$('#halls').val(respones.hallid);
+
+
+					}
+				})
+			}
+			$(document).ready(function () {
+				$.ajax({
+					url: '/booktick/hall',
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						$.each(respones, function (i, e) {
+
+							let tickhall = /*[[${tickinfo.moviename}]]*/'' // 直接輸出數值
+							let selectshows = (tickhall === e.moviename) ? 'selected' : '';
+
+							// //console.log(e.hallid);
+							// $('#halls').append(`<option value="${e.theaterid}" ${selectshows}>${e.theaterid}</option>`)
+							// $('#moviename').empty();
+
+							$('#moviename').append(`<option value="${e.movieid}" ${selectshows}>${e.moviename}</option>`)
+							//console.log(hall)
+
+						});
+						// let hall = $("#halls").val();
+						/////
+						name();
+						/////
+
+
+
+						/////////////////////////////////////////////
+
+
+						////////////////////////////////////////	
+					}
+				})
+			});
+
+			// $("#halls").on("change", function () {
+			// 	name();
+
+			// })
+			//////
+			function loadseat() {
+				let selecttime = $("#time").val();
+				let selecthall = $("#halls").val();
+				let seats =/*[[${tickinfo.seatid}]]*/'';
+
+				$("#seat").empty();
+				let soldSeats = [];
+				$.ajax({
+					url: '/booktick/seat',
+					data: { showtimeid: selecttime, hallid: selecthall },
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						$.each(respones, function (i, e) {
+							console.log(e.seatid);
+
+							soldSeats.push(e.seatid);
+						})
+						let allSeats = [];
+						// 生成所有座位 (假設 5 排，每排 5 個座位)
+						for (let row of ["A", "B", "C", "D", "E"]) {
+							for (let col = 1; col <= 10; col++) {
+								allSeats.push(row + col);
+							}
+						}
+						// 取得 <select> 元素
+						// let select = document.getElementById("seat");
+						// 過濾出尚未售出的座位
+						let availableSeats = allSeats.filter(seat => !soldSeats.includes(seat) || seat === seats);
+						// 生成 <option> 並添加到 <select>
+						availableSeats.forEach(function (seat) {
+
+							let selectse = (seats == seat) ? 'selected' : '';
+							$('#seat').append(`<option value="${seat}" ${selectse}>${seat}</option>`)
+
+						})
+					},
+					error: function () { console.log('sate') }
+				})
+			};
+			$("#moviename").on("change", function () {
+				$('#hallid').empty();
+				let selectmovie = $(this).val();
+
+				$.ajax({
+					url: '/booktick/name',
+					data: { nameid: selectmovie },
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						console.log(respones);
+
+						$('#halls').val(respones.hallid);
+
+
+					}
+				})
+
+			});
+
+
+			$('#moviename').on("change", function () {
+
+				setTimeout(loadseat, 100);
+
+			});
+
+
+			$(document).ready(function () {
+				let selecthall = $("#halls").val();
+				if (!selecthall || selecthall.trim() === "") {
+					setTimeout(loadseat, 500);
+				} else {
+
+					loadseat();
+				}
+			});
+
+			let money = [];
+
+			function moneyse() {
+				let tp = $('#type').val();
+				let time = $('#time').text();
+				//console.log(time)
+				let mf = 0
+				if (tp == 1) {
+
+					mf = money[tp - 1];
+					$("#money").val(mf)
+					console.log()
+				}
+				else if (tp == 2) {
+
+					mf = money[tp - 1];
+					$("#money").val(mf)
+				}
+				else if (tp == 3) {
+
+					mf = money[tp - 1];
+					$("#money").val(mf)
+				} else if (tp == 4) {
+
+					mf = money[tp - 1];
+					$("#money").val(mf)
+				}
+			}
+
+
+			$(document).ready(function () {
+				$.ajax({
+					url: '/booktick/type',
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						$.each(respones, function (i, e) {
+							let ticktyp =/*[[${tickinfo.tickettypeid}]]*/'';
+
+							//console.log(ticktyp)
+							let se = e.tickettypeid
+							let selectty = (ticktyp == se) ? 'selected' : '';
+							//console.log(ticktyp)
+							//console.log(se)
+							//console.log(selectty)
+							$('#type').append(`<option value="${e.tickettypeid}" ${selectty}>${e.tickettype}</option>`)
+							money.push(e.moneytype)
+							moneyse();
+						})
+					}
+				})
+			});
+
+			$('#type').on("change", function () {
+				moneyse();
+			})
+
+
+			//////////////////
+		})
+
+
+
+
+
+	</script>
+</body>
+
+</html>

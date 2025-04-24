@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>菜單一覽表</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		body {
+			background-image: url('/uploads/w.jpg');
+			/* 如果有背景圖可加 */
+			background-size: cover;
+			color: #fff;
+		}
+
+		.table th,
+		.table td {
+			vertical-align: middle;
+		}
+
+		img.menu-img {
+			width: 80px;
+			height: auto;
+			border-radius: 8px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div th:replace="~{laout/tableremack}"></div>
+<div id="bodddd">
+
+	<div class="container mt-5 bg-dark bg-opacity-75 p-4 rounded">
+		<h2 class="text-center text-light mb-4">🍔 菜單一覽表</h2>
+
+		<div class="text-end mb-3">
+			<a href="/menu/new" class="btn btn-success">新增菜單</a>
+			<a href="/admin/orders/search" class="btn btn-primary">查詢訂單</a>
+			<a href="/menu/statistics" class="btn btn-info">銷售分析</a>
+			
+		</div>
+
+		<table class="table table-hover table-bordered table-light">
+			<thead class="table-dark">
+				<tr>
+					<th>圖片</th>
+					<th>名稱</th>
+					<th>庫存</th>
+					<th>單價</th>
+					<th>狀態</th>
+					<th>類別</th>
+					<th>介紹</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="menu : ${menuItems}">
+					<td><img th:src="${menu.imageUrl}" class="menu-img" alt="圖片">
+					</td>
+					<td th:text="${menu.menuName}"></td>
+					<td th:text="${menu.stock}"></td>
+					<td th:text="${menu.unitPrice}"></td>
+					<td th:text="${menu.status}"></td>
+					<td th:text="${menu.category}"></td>
+					<td th:text="${menu.description}"></td>
+					<td><a th:href="@{'/menu/edit/' + ${menu.menuId}}" class="btn btn-warning btn-sm">編輯</a> <a
+							th:href="@{'/menu/delete/' + ${menu.menuId}}" class="btn btn-danger btn-sm"
+							onclick="return confirm('確定要刪除這筆資料嗎？');">刪除</a></td>
+				</tr>
+			</tbody>
+		</table>
+		<nav th:if="${totalPages > 1}" aria-label="Page navigation example">
+			<ul class="pagination justify-content-center">
+
+
+				<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'"><a class="page-link"
+						th:href="@{'/menu/page/' + ${currentPage - 1}}">Previous</a>
+				</li>
+
+
+				<li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+					th:classappend="${i == currentPage} ? 'active'"><a class="page-link"
+						th:href="@{'/menu/page/' + ${i}}" th:text="${i}">1</a>
+				</li>
+
+
+				<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'"><a class="page-link"
+						th:href="@{'/menu/page/' + ${currentPage + 1}}">Next</a>
+				</li>
+
+			</ul>
+		</nav>
+
+	</div>
+	</div>
+</body>
+
+</html>

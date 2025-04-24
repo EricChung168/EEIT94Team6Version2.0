@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>會員專區</title>
+	<style>
+		/* dataTables表格表頭居中 */
+		#myTable>thead:first-child>tr:first-child>th {
+			text-align: center;
+		}
+
+		/* dataTables表格內容居中 */
+		#myTable>tbody>tr>td {
+			text-align: center;
+		}
+
+		#table {
+			border: 1px solid rgb(168, 168, 168);
+		}
+	</style>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/css/memberDetail.css">
+	<link rel="stylesheet" href="/css/footer.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css" />
+
+</head>
+
+<body>
+
+	<!-- Bootstrap SVG icons symbols -->
+  <!-- Bootstrap SVG icons symbols -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="chevron-down" viewBox="0 0 16 16">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
+    </symbol>
+  </svg>
+
+  <!-- 匯入 navbar -->
+  <div th:replace="fragments/navbar :: navbar"></div>
+
+  <div class="d-flex">
+    <!-- 左側側邊欄 -->
+    <div th:replace="fragments/memberDetailsideBar :: memberDetailsideBar"></div>
+
+		<!-- 右側內容區 -->
+		<div class="flex-grow-1 p-4">
+			<h3>訂單明細</h3>
+			<div id="table">
+				<table id="myTable" class="display">
+					<thead>
+						<tr>
+							<th>訂單編號</th>
+							<th>下單日期</th>
+							<th>總金額</th>
+							<th>電影名稱</th>
+							<th>觀看日期</th>
+							<th>場次</th>
+							<th>廳</th>
+							<th>座位</th>
+							<th>付款</th>
+
+
+
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:each="tickinfos:${detil}">
+							<tr>
+
+								<td th:text="${tickinfos.orderid}"></td>
+								<td th:text="${tickinfos.orderdate}"></td>
+								<td th:text="${tickinfos.sumpay}"></td>
+								<td th:text="${tickinfos.moviename}"></td>
+								<td th:text="${tickinfos.showdate}"></td>
+								<td th:text="${#strings.substring(tickinfos.showtime, 0, 8)}"></td>
+								<td th:text="${tickinfos.hallid}"></td>
+								<td th:text="${tickinfos.seat}"></td>
+								<td>
+									<a th:if="${tickinfos.payout == 'N'}"
+										th:href="@{/orderpaycheck(orderid=${tickinfos.orderid})}">付款</a> <span
+										th:unless="${tickinfos.payout == 'N'}">已付款</span>
+								</td>
+
+							</tr>
+
+
+						</th:block>
+
+					</tbody>
+				</table>
+				<!-- Button trigger modal -->
+
+
+				<!-- Modal -->
+
+			</div>
+		</div>
+	</div>
+
+	<!-- 匯入 footer -->
+	<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+
+
+		// $("#myTable").DataTable(
+
+		// 	{
+		// 		info: false,
+		// 		lengthChange: false,
+
+		// 	}
+
+		// );
+		$(document).ready(function () {
+			$('#myTable').DataTable({
+				"columnDefs": [{
+					"targets": [0, 1, 2, 3, 4, 5, 6, 7], // 設定要置中的欄位索引 (從 0 開始)
+
+					"lengthChange": false,
+					"className": "dt-center" // DataTables 內建的置中 class
+				}]
+				, info: false,
+				lengthChange: false
+			});
+			// let order = $('#paygogo').data('orderid');
+
+			// $('#paygogo').on("click",function () {
+
+			// 	$.ajax({
+			// 		url: '/orderpaycheck',
+			// 		data: { orderid: order },
+			// 		dataType: 'json',
+			// 		type: 'GET',
+			// 		success: function (respones) {
+			// 		console.log(respones);
+
+			// 		}
+			// 	})
+
+
+			// })
+
+
+
+		});
+
+
+
+	</script>
+</body>
+
+</html>

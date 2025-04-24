@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Register</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+	<style>
+	.bg-register-image {
+	  background: url('/imgs/register.jpg');
+	  background-position: center;
+	  background-size: cover;
+	}
+	</style>
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                    <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">建立員工帳號</h1>
+                            </div>
+                            <form class="register-form user" method="post" th:action="@{/employee/empRegister}">
+							  <!-- 基本資料區塊 -->
+							  <fieldset class="border p-3 mb-4 rounded">
+							    <legend class="w-auto px-2">基本資料</legend>
+							
+							    <div class="form-group">
+							      <label>員工姓名 :</label>
+							      <input type="text" class="form-control form-control-user" id="name" name="name" placeholder="員工姓名(全名)" required>
+							    </div>
+							
+							    <div class="form-group">
+							      <label>員工生日 :</label>
+							      <input type="date" class="form-control form-control-user" id="dateOfBirth" name="dateOfBirth" required>
+							    </div>
+							
+							    <div class="form-group">
+							      <label>員工性別 (Gender):</label><br>
+							      <div class="form-check form-check-inline">
+							        <input class="form-check-input" type="radio" name="gender" id="male" value="male" required>
+							        <label class="form-check-label" for="male">男生</label>
+							      </div>
+							      <div class="form-check form-check-inline">
+							        <input class="form-check-input" type="radio" name="gender" id="female" value="female" required>
+							        <label class="form-check-label" for="female">女生</label>
+							      </div>
+							    </div>
+							    
+							    <div class="form-group">
+							      <label>員工職稱 :</label>
+							      	<div id="selectedJobTitle" class="text-primary font-weight-bold mt-2" onchange="showSelectedJobTitle()"></div>
+							        <select class="form-control form-control-user" id="jobTitle" name="jobTitle" required>
+				                     <option value="經理">經理</option>
+				                     <option value="店長">店長</option>
+				                     <option value="副店長">副店長</option>
+				                     <option value="會員管理人員">會員管理人員</option>
+				                     <option value="訂票管理人員">訂票管理人員</option>
+				                     <option value="餐點管理人員">餐點管理人員</option>
+				                     <option value="電影管理人員">電影管理人員</option>
+				                     <option value="工讀生">工讀生</option>
+				                    </select>
+				                </div>
+				                    
+				                    
+				                <div class="form-group">
+							      <label>員工權限等級:</label><br>
+							      <div class="form-check form-check-inline">
+							        <input class="form-check-input" type="radio" name="permissionLevel"id="permissionLevel1" value="1" required>
+							        <label class="form-check-label" for="permissionLevel1">1</label>
+							      </div>
+							      <div class="form-check form-check-inline">
+							        <input class="form-check-input" type="radio" name="permissionLevel"id="permissionLevel2" value="2" required>
+							        <label class="form-check-label" for="permissionLevel2">2</label>
+							      </div>
+							      <div class="form-check form-check-inline">
+							        <input class="form-check-input" type="radio" name="permissionLevel"id="permissionLevel3" value="3" required>
+							        <label class="form-check-label" for="permissionLevel3">3</label>
+							      </div>
+							      
+							    </div>
+							    
+							    <div class="form-group">
+							      <label>員工入職時間 :</label>
+							      <input type="date" class="form-control form-control-user" id="entryTime" name="entryTime" required>
+							    </div>
+							    
+							  </fieldset>
+							
+							  <!-- 帳號資料區塊 -->
+							  <fieldset class="border p-3 mb-4 rounded">
+							    <legend class="w-auto px-2">帳號資訊</legend>
+							
+							    <div class="form-group">
+							      <label>帳號 (Email):</label>
+							      <input type="email" class="form-control form-control-user" name="email" placeholder="員工帳號(example@gmail.com)" required>
+							    </div>
+							
+							    <div class="form-group">
+							      <label>手機號碼 (Phone Number):</label>
+							      <input type="text" class="form-control form-control-user" name="phoneNumber"
+							        minlength="10" maxlength="10" pattern="[0]{1}[9]{1}\d{8}" placeholder="須按照格式(09XXXXXXXX)" required>
+							    </div>
+							
+							    <div class="form-group">
+							      <label>身分證字號 :</label>
+							      <input type="text" class="form-control form-control-user" name="nationalId"
+							        maxlength="10" pattern="[a-zA-Z]{1}[1-2,8-9]{1}\d{8}" placeholder="須按照格式(A1XXXXXXXX)" required>
+							    </div>
+							  </fieldset>
+							
+							  <!-- 密碼區塊 -->
+							  <fieldset class="border p-3 mb-4 rounded">
+							    <legend class="w-auto px-2">密碼設定</legend>
+							
+							    <div class="form-group row">
+							      <div class="col-sm-6 mb-3 mb-sm-0">
+							        <label>請輸入密碼 :</label>
+							        <input type="password" id="password" name="password" class="form-control form-control-user" placeholder="Password" required>
+							      </div>
+							      <div class="col-sm-6">
+							        <label>確認密碼 :</label>
+							        <input type="password" id="password2" name="password2" class="form-control form-control-user" placeholder="Repeat Password" required>
+							      </div>
+							    </div>
+							  </fieldset>
+							
+							  <button type="submit" class="btn btn-primary btn-user btn-block">Register Account</button>
+							
+							</form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" th:href="@{/employee/empLogin}">Already have an account? Login!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+    $(document).ready(function () {
+        $('#jobTitle').change(function () {
+            const selected = $(this).val();
+            $('#selectedJobTitle').text("您選擇的職稱是：" + selected);
+        });
+
+        $('.register-form').submit(function (e) {
+            e.preventDefault();
+            let password = $('input[name="password"]').val();
+            let password2 = $('input[name="password2"]').val();
+            if (password !== password2) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '密碼不一致',
+                    text: '請確認兩次密碼輸入相同'
+                });
+                return;
+            }
+            $.ajax({
+                url: '/employee/empRegister',
+                type: 'POST',
+                data: $('.register-form').serialize(),
+                success: function (response) {
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '註冊成功',
+                            html: `歡迎 <b>${response.name}</b> 加入我們！`,
+                            confirmButtonText: '關閉'
+                        }).then(() => {
+                            $('#registerModal').modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '註冊失敗',
+                            text: response.message || '請稍後再試'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '伺服器錯誤',
+                        text: '請稍後再試或聯絡客服'
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+
+</html>

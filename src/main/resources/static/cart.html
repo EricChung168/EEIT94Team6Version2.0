@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>🛒 我的購物車</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+.cart-item img {
+	width: 80px;
+	height: 80px;
+	object-fit: cover;
+}
+.cart-item {
+	border-bottom: 1px solid #eee;
+	padding: 10px 0;
+}
+.qty-btn {
+	width: 30px;
+	height: 30px;
+	line-height: 1;
+	padding: 0;
+}
+.qty-box {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+</style>
+</head>
+<body class="bg-light">
+	<div class="container mt-5">
+		<h3 class="mb-4">🛒 我的購物車</h3>
+
+		<div id="cartList" class="bg-white p-4 rounded shadow-sm"></div>
+
+		<div class="text-end mt-4">
+			<h5>
+				總金額：<span id="total">$0</span>
+			</h5>
+
+			<!-- 返回選單按鈕 -->
+			<a href="/usersmenu/page/1" class="btn btn-secondary me-2">返回選單</a>
+
+			<!-- ✅ 結帳 + 手機欄位 -->
+			<form action="/checkout/ecpay" method="post" style="display: inline-block; max-width: 400px;" class="mt-3">
+				<div class="input-group">
+					<input type="text" name="phone" class="form-control" placeholder="請輸入手機號碼" required>
+					<button type="submit" class="btn btn-success">結帳</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+<script>
+function loadCart() {
+  $.get("/cart/view", function(res) {
+    let html = "";
+    let total = 0;
+
+    if (!res.items || res.items.length === 0) {
+      html = '<p class="text-muted">購物車是空的</p>';
+    } else {
+      res.items.forEach(item => {
+        total += item.subtotal;
+        html += `
+          <div class="row cart-item align-items-center">
+            <div class="col-md-2">
+              <img src="${item.imageUrl}" alt="圖片" class="img-thumbnail">
+            </div>
+            <div class="col-md-4">
+              <strong>${item.menuName}</strong><br>
+              單價：$${item.unitPrice}<br>
+              小計：$${item.subtotal}
+            </div>
+            <div class="col-md-3">
+              <div class="qty-box">
+                <button class="btn btn-outline-secondary qty-btn" onclick="changeQty(${item.menuId}, -1)">-</button>
+                <span id="qty-${item.menuId}">${item.quantity}</span>
+                <button class="btn btn-outline-secondary qty-btn" onclick="changeQty(${item.menuId}, 1)">+</button>
+              </div>
+            </div>
+            <div class="col-md-3 text-end">
+              <button class="btn btn-outline-danger btn-sm" onclick="removeItem(${item.menuId})">🗑 移除</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    $("#cartList").html(html);
+    $("#total").text(`$${total}`);
+  });
+}
+
+function changeQty(menuId, diff) {
+  const current = parseInt($(`#qty-${menuId}`).text());
+  const newQty = current + diff;
+  if (newQty <= 0) {
+    removeItem(menuId);
+  } else {
+    $.post("/cart/add", { menuId, quantity: diff }, loadCart);
+  }
+}
+
+function removeItem(menuId) {
+  $.get(`/cart/delete?menuId=${menuId}`, loadCart);
+}
+
+$(document).ready(loadCart);
+</script>
+</body>
+</html>
+

@@ -1,0 +1,30 @@
+<!-- member/verifyFail.html -->
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>驗證失敗 - 光影之門</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gradient-primary">
+
+<!-- 存放錯誤訊息 -->
+<div id="verify-message" th:attr="data-msg=${message}"></div>
+
+<script>
+  const message = document.getElementById('verify-message').dataset.msg;
+
+  Swal.fire({
+    icon: 'error',
+    title: '驗證失敗',
+    text: message,
+    confirmButtonText: '回首頁',
+    allowOutsideClick: false,
+    allowEscapeKey: false
+  }).then(() => {
+    window.location.href = "/";
+  });
+</script>
+
+</body>
+</html>

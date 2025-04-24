@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>訂單明細</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+	<div class="container mt-5">
+		<h4 class="mb-4">
+			📦 訂單編號：<span th:text="${orderId}">12345</span>
+		</h4>
+
+		<table class="table table-bordered table-striped">
+			<thead class="table-dark">
+				<tr>
+					<th>品項名稱</th>
+					<th>數量</th>
+					<th>單價</th>
+					<th>小計</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="item : ${items}">
+					<td th:text="${item.menu.menuName}"></td>
+					<td th:text="${item.quantity}"></td>
+					<td>$<span th:text="${item.unitPrice}"></span></td>
+					<td>$<span th:text="${item.quantity * item.unitPrice}"></span></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<a href="/admin/orders/search" class="btn btn-secondary mt-3">返回查詢</a>
+	</div>
+</body>
+</html>

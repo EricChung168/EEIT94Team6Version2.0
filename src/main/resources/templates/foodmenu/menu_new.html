@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>新增菜單</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('/uploads/w.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+        }
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.75);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 50px;
+        }
+        label {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container col-md-6 form-container">
+    <h2 class="mb-4 text-center">🍽️ 新增菜單</h2>
+
+    <form th:action="@{/menu/save}" th:object="${menu}" method="post" enctype="multipart/form-data">
+    
+        <div class="mb-3">
+            <label for="menuName" class="form-label">名稱</label>
+            <input type="text" th:field="*{menuName}" class="form-control" id="menuName" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">類別</label>
+            <input type="text" th:field="*{category}" class="form-control" id="category" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="stock" class="form-label">庫存</label>
+            <input type="number" th:field="*{stock}" class="form-control" id="stock" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="unitPrice" class="form-label">單價</label>
+            <input type="number" step="0.01" th:field="*{unitPrice}" class="form-control" id="unitPrice" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="status" class="form-label">狀態</label>
+            <select th:field="*{status}" class="form-select" id="status" required>
+                <option value="">--請選擇--</option>
+                <option value="上架">上架</option>
+                <option value="下架">下架</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">介紹</label>
+            <textarea th:field="*{description}" class="form-control" id="description" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="image" class="form-label">上傳圖片</label>
+            <input type="file" name="imageFile" class="form-control" id="image" accept="image/*" required>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">儲存</button>
+            <a href="/menu/list" class="btn btn-secondary ms-2">返回列表</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

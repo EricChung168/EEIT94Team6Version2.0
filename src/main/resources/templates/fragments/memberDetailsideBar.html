@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>memberDetial</title>
+</head>
+<body>
+	<div th:fragment="memberDetailsideBar" class="flex-shrink-0 p-3 sidebar bg-dark text-white">
+    <ul class="nav flex-column memberDetailsideBar">
+      <!-- 區塊 1：我的帳戶 -->
+      <li class="mb-1">
+        <button class="btn w-100 text-start d-flex justify-content-between align-items-center"
+                data-bs-toggle="collapse"
+                data-bs-target="#memberDetail-collapse"
+                aria-expanded="false">
+          <span><i class="fas fa-user me-2"></i> 我的帳戶</span>
+          <svg class="bi" width="16" height="16" style="color: white;"><use xlink:href="#chevron-down"/></svg>
+        </button>
+        <div class="collapse ps-3 mt-1" id="memberDetail-collapse">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/member/memberDetail}">
+              <i class="fas fa-id-card me-2"></i> 個人資料變更</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-envelope me-2"></i> 變更信箱</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fas fa-key me-2"></i> 變更密碼</a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- 區塊 2：歷史訂單（可展開） -->
+      <li class="mb-1">
+        <button class="btn w-100 text-start d-flex justify-content-between align-items-center"
+                data-bs-toggle="collapse"
+                data-bs-target="#order-collapse"
+                aria-expanded="false">
+          <span><i class="fas fa-clock me-2"></i> 歷史訂單</span>
+          <svg class="bi" width="16" height="16" style="color: white;"><use xlink:href="#chevron-down"/></svg>
+        </button>
+        <div class="collapse ps-3 mt-1" id="order-collapse">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/foodmenu/memberFoodOrders}">
+              <i class="fas fa-utensils"></i>  餐點明細</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/detail}">
+                <i class="fas fa-ticket-alt"></i>  訂票明細</a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- 區塊 3：我的優惠券 -->
+      <li class="nav-item mb-2">
+        <a href="#" class="nav-link">
+          <i class="fas fa-gift me-2"></i> 我的優惠券
+        </a>
+      </li>
+
+      <!-- 區塊 4：交易支付及退款查詢 -->
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-receipt me-2"></i> 交易支付及退款查詢
+        </a>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>

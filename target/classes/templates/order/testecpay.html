@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>電影購票資訊</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #4d4d4d;
+      /* 深色背景 */
+      color: #eee;
+      /* 淺色文字 */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      background-image: url('your-movie-background.jpg');
+      /* 可選：添加電影風格的背景圖片 */
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.8);
+      /* 半透明深色容器 */
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(233, 198, 3, 0.712);
+      /* 金色陰影 */
+      margin-bottom: 30px;
+      width: 80%;
+      max-width: 600px;
+    }
+
+    h2 {
+      color: gold;
+      /* 金色標題 */
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 2em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      color: #ddd;
+      margin-bottom: 5px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    }
+
+    .input-group input {
+      padding: 12px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background-color: #333;
+      color: #eee;
+      font-size: 1em;
+    }
+
+    .ud {
+      pointer-events: none;
+      opacity: 0.6;
+      background-color: #444;
+      color: #aaa;
+      border-color: #666;
+    }
+
+    button[type="submit"] {
+      background-color: gold;
+      /* 金色按鈕 */
+      color: #333;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2em;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    button[type="submit"]:hover {
+      background-color: #ffd700;
+      /* 稍微亮一點的金色 */
+    }
+
+    /* 可選：添加一些細微的紋理效果 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(rgba(0, 0, 0, 0.1) 15%, transparent 16%),
+        radial-gradient(rgba(0, 0, 0, 0.05) 15%, transparent 16%);
+      background-size: 60px 60px;
+      background-position: 0 0, 30px 30px;
+      opacity: 0.4;
+      z-index: -1;
+    }
+
+    .fo {
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>電影購票資訊</h2>
+    <div class="input-group">
+      <label for="orderid" class="fo">訂單編號:</label>
+      <input type="text" name="orderid" th:value="${ordere}" value="" class="ud" id="orderid" readonly />
+    </div>
+    <div class="input-group">
+      <label for="datepicker" class="fo">觀看日期:</label>
+      <input type="text" id="datepicker" class="form-control ud" placeholder="日期" value="" readonly>
+    </div>
+    <div class="input-group">
+      <label for="timeq" class="fo">場次:</label>
+      <input type="text" id="timeq" class="form-control ud" placeholder="場次" value="" readonly>
+    </div>
+    <div class="input-group">
+      <label for="halls" class="fo">廳:</label>
+      <input type="text" name="hallid" id="halls" class="form-control ud" placeholder="廳" value="" readonly />
+    </div>
+    <div class="input-group">
+      <label for="moviename" class="fo">電影:</label>
+      <input type="text" name="movieid" class="form-control selectpicker ud" id="moviename" placeholder="電影" readonly>
+    </div>
+
+    <form action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5" method="post">
+      <input type="hidden" name="MerchantID" value="2000132" />
+      <input type="hidden" name="MerchantTradeNo" value="" class="orderid" />
+      <input type="hidden" name="MerchantTradeDate" value="" id="daratime" />
+      <input type="hidden" name="PaymentType" value="aio" />
+      <input type="hidden" name="TotalAmount" value="" id="total" />
+      <input type="hidden" name="TradeDesc" value="電影購票付款" id="trade" />
+      <input type="hidden" name="ItemName" value="電影" id="item" />
+
+      <input type="hidden" name="EncryptType" value="1" />
+
+      <input type="hidden" name="ReturnURL" value="http://localhost:8080/pay" />
+      <input type="hidden" name="ClientBackURL" value="http://localhost:8080" />
+      <input type="hidden" name="OrderResultURL" value="http://localhost:8080/pay" />
+
+      <input type="hidden" name="ChoosePayment" value="ALL" />
+      <input type="hidden" name="CustomField1" value="" id="CustomField1" />
+
+      <button type="submit">確認付款</button>
+    </form>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script>
+    // ... (您的 JavaScript 程式碼保持不變)
+    function generateCheckMacValue(params, hashKey, hashIV) {
+      let sortedParams = Object.keys(params)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = params[key];
+          return obj;
+        }, {});
+
+      let encodedParams = Object.keys(sortedParams)
+        .map((key) => `${key}=${sortedParams[key]}`)
+        .join("&");
+      let preHash = `HashKey=${hashKey}&${encodedParams}&HashIV=${hashIV}`;
+      let encodedPreHash = encodeURIComponent(preHash)
+        .toLowerCase()
+        .replace(/%20/g, "+")
+        .replace(/%2d/g, "-")
+        .replace(/%5f/g, "_")
+        .replace(/%2e/g, ".")
+        .replace(/%21/g, "!")
+        .replace(/%2a/g, "*")
+        .replace(/%28/g, "(")
+        .replace(/%29/g, ")");
+      let sha256Hash = CryptoJS.SHA256(encodedPreHash)
+        .toString()
+        .toUpperCase();
+      return sha256Hash;
+    }
+    console.log();
+
+    function generateOrderIdWithRandom() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      const hour = String(now.getHours()).padStart(2, "0");
+      const minute = String(now.getMinutes()).padStart(2, "0");
+      const second = String(now.getSeconds()).padStart(2, "0");
+      const millisecond = String(now.getMilliseconds()).padStart(3, "0");
+      const random = Math.floor(Math.random() * 1000); // 產生 0-999 的隨機數
+
+      return `${year}${month}${day}${hour}${minute}${second}${millisecond}${String(
+        random
+      ).padStart(3, "0")}`;
+    }
+    function getCurrentDateTimeFormatted() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0"); // 月份從 0 開始，需要 +1 並補零
+      const day = String(now.getDate()).padStart(2, "0");
+      const hour = String(now.getHours()).padStart(2, "0");
+      const minute = String(now.getMinutes()).padStart(2, "0");
+      const second = String(now.getSeconds()).padStart(2, "0");
+
+      return `${year}/${month}/${day} ${hour}:${minute}:${second}`;
+    }
+
+    const currentDateTime = getCurrentDateTimeFormatted();
+
+    $("#daratime").val(currentDateTime);
+
+    const orderId = generateOrderIdWithRandom();
+    console.log(orderId); // 輸出類似：20250409091200456789
+    $(".orderid").val(orderId);
+
+
+
+    $(function () {
+
+
+
+
+      let order = $("#orderid").val();
+      $.ajax({
+        url: '/orderpaycheckform',
+        data: { orderid: order },
+        dataType: 'json',
+        type: 'GET',
+        success: function (respones) {
+
+
+          console.log(respones);
+
+          $('#datepicker').val(respones.showdate);
+          $('#halls').val(respones.hallid);
+          $('#moviename').val(respones.moviename);
+          const timeString = respones.showtime;
+          const formattedTime = timeString.substring(0, 8);
+          $('#timeq').val(formattedTime);
+          $('#total').val(respones.sumpay);
+          $('#CustomField1').val(respones.orderid);
+
+          let params = {
+            MerchantID: "2000132",
+            MerchantTradeNo: orderId,
+            MerchantTradeDate: $("#daratime").val(),
+            PaymentType: "aio",
+            TotalAmount: $("#total").val(),
+            TradeDesc: $("#trade").val(),
+            ItemName: $("#item").val(),
+            ReturnURL: "http://localhost:8080/pay",
+            ClientBackURL: "http://localhost:8080",
+            OrderResultURL: "http://localhost:8080/pay",
+            ChoosePayment: "ALL",
+            EncryptType: "1",
+            CustomField1: $("#CustomField1").val()
+          };
+
+          let hashKey = "5294y06JbISpM5x9";
+          let hashIV = "v77hoKGq4kWxNNIS";
+          let checkMacValue = generateCheckMacValue(params, hashKey, hashIV);
+
+          let checkMacValueInput = document.createElement("input");
+          checkMacValueInput.type = "hidden";
+          checkMacValueInput.name = "CheckMacValue";
+          checkMacValueInput.value = checkMacValue;
+          document.querySelector("form").appendChild(checkMacValueInput);
+
+        }
+      })
+      // /////
+      // let ticktimeid = $('#time').val()
+      // console.log(ticktimeid);
+
+      // $.ajax({
+      //   url: '/booktick/timese/' + ticktimeid,
+      //   dataType: 'json',
+      //   type: 'post',
+      //   success: function (respones) {
+
+
+      //     console.log(respones);
+      //     $('#datepicker').val(respones.startdate);
+      //     $('#timeq').val(respones.starttime);
+
+
+
+      //   }
+      // })
+      // ////
+      // $.ajax({
+      //   url: '/booktick/type',
+      //   dataType: 'json',
+      //   type: 'GET',
+      //   success: function (respones) {
+      //     $.each(respones, function (i, e) {
+      //       let ticktyp =
+      //       //console.log(ticktyp)
+      //       let se = e.tickettypeid
+      //       let selectty = (ticktyp == se) ? 'selected' : '';
+      //       //console.log(ticktyp)
+      //       //console.log(se)
+      //       //console.log(selectty)
+      //       $('#type').append(`<option value="${e.tickettypeid}" ${selectty}>${e.tickettype}</option>`)
+
+
+      //     })
+      //   }
+      // })
+    })
+
+
+
+  </script>
+</body>
+
+</html>

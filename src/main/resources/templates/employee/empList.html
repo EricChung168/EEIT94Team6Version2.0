@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>員工匯入 - 光影之門</title>
+
+<link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Nunito"
+	rel="stylesheet">
+<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap4.css" />
+<style>
+.bg-register-image {
+	background: url('/imgs/register.jpg');
+	background-position: center;
+	background-size: cover;
+}
+
+#content-wrapper {
+	min-height: 100vh;
+}
+</style>
+</head>
+<body id="page-top">
+
+	<div id="wrapper">
+		<th:block th:replace="fragments/empSidebar :: sidebar"></th:block>
+
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<th:block th:replace="fragments/empTopbar :: topbar"></th:block>
+
+				<div class="container-fluid">
+					<div
+						class="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 class="h3 mb-0 text-gray-800">員工後台系統 員工管理系統</h1>
+						<div>
+							<button id="downloadTemplateBtn"
+								class="btn btn-sm btn-info shadow-sm">
+								<i class="fas fa-file-csv fa-sm text-white-50"></i> 下載範例 CSV
+							</button>
+							<button class="btn btn-sm btn-primary shadow-sm"
+								data-toggle="modal" data-target="#csvUploadModal">
+								<i class="fas fa-upload fa-sm text-white-50"></i> 使用 CSV 匯入
+							</button>
+							<button class="btn btn-sm btn-success shadow-sm"
+								data-toggle="modal" data-target="#registerModal">
+								<i class="fas fa-user-plus fa-sm text-white-50"></i> 手動新增員工
+							</button>
+						</div>
+					</div>
+					<div class="container mt-5">
+						<h2>員工清單</h2>
+						<table id="dataTable" class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>姓名</th>
+									<th>性別</th>
+									<th>身分證</th>
+									<th>Email</th>
+									<th>電話</th>
+									<th>職稱</th>
+									<th>入職時間</th>
+									<th>生日</th>
+									<th>權限</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+					<th:block th:replace="fragments/empFooter :: footer"></th:block>
+		</div>
+	</div>
+
+	<a class="scroll-to-top rounded" href="#page-top"> <i
+		class="fas fa-angle-up"></i>
+	</a>
+
+	<!-- CSV Upload Modal -->
+	<div class="modal fade" id="csvUploadModal" tabindex="-1" role="dialog"
+		aria-labelledby="csvUploadModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<form id="csvUploadForm" enctype="multipart/form-data">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">匯入員工資料</h5>
+						<button type="button" class="close" data-dismiss="modal">
+							<span>&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<input type="file" class="form-control" name="file" id="csvFile"
+							accept=".csv" required />
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" type="button"
+							data-dismiss="modal">取消</button>
+						<button class="btn btn-primary" type="submit">匯入</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- 新增 Modal：手動新增員工 -->
+	<div class="modal fade" id="registerModal" tabindex="-1" role="dialog"
+		aria-labelledby="registerModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">手動新增員工</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form class="register-form user" method="post">
+						<fieldset class="border p-3 mb-4 rounded">
+							<legend class="w-auto px-2">基本資料</legend>
+							<div class="form-group">
+								<label>員工姓名 :</label> <input type="text"
+									class="form-control form-control-user" name="name"
+									placeholder="員工姓名(全名)" required>
+							</div>
+							<div class="form-group">
+								<label>員工生日 :</label> <input type="date"
+									class="form-control form-control-user" name="dateOfBirth"
+									required>
+							</div>
+							<div class="form-group">
+								<label>員工性別 (Gender):</label><br>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="gender"
+										id="male" value="male" required> <label
+										class="form-check-label" for="male">男生</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="gender"
+										id="female" value="female" required> <label
+										class="form-check-label" for="female">女生</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label>員工職稱 :</label>
+								<div id="selectedJobTitle"
+									class="text-primary font-weight-bold mt-2"></div>
+								<select class="form-control form-control-user" id="jobTitle"
+									name="jobTitle" required>
+									<option value="經理">經理</option>
+									<option value="店長">店長</option>
+									<option value="副店長">副店長</option>
+									<option value="會員管理人員">會員管理人員</option>
+									<option value="訂票管理人員">訂票管理人員</option>
+									<option value="餐點管理人員">餐點管理人員</option>
+									<option value="電影管理人員">電影管理人員</option>
+									<option value="工讀生">工讀生</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>員工權限等級:</label><br>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio"
+										name="permissionLevel" id="permissionLevel1" value="1"
+										required> <label class="form-check-label"
+										for="permissionLevel1">1</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio"
+										name="permissionLevel" id="permissionLevel2" value="2"
+										required> <label class="form-check-label"
+										for="permissionLevel2">2</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio"
+										name="permissionLevel" id="permissionLevel3" value="3"
+										required> <label class="form-check-label"
+										for="permissionLevel3">3</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label>員工入職時間 :</label> <input type="date"
+									class="form-control form-control-user" name="entryTime"
+									required>
+							</div>
+						</fieldset>
+
+						<fieldset class="border p-3 mb-4 rounded">
+							<legend class="w-auto px-2">帳號資訊</legend>
+							<div class="form-group">
+								<label>帳號 (Email):</label> <input type="email"
+									class="form-control form-control-user" name="email"
+									placeholder="員工帳號(example@gmail.com)" required>
+							</div>
+							<div class="form-group">
+								<label>手機號碼 (Phone Number):</label> <input type="text"
+									class="form-control form-control-user" name="phoneNumber"
+									minlength="10" maxlength="10" pattern="[0]{1}[9]{1}\d{8}"
+									placeholder="須按照格式(09XXXXXXXX)" required>
+							</div>
+							<div class="form-group">
+								<label>身分證字號 :</label> <input type="text"
+									class="form-control form-control-user" name="nationalId"
+									maxlength="10" pattern="[a-zA-Z]{1}[1-2]{1}\d{8}"
+									placeholder="須按照格式(A1XXXXXXXX)" required>
+							</div>
+						</fieldset>
+
+						<fieldset class="border p-3 mb-4 rounded">
+							<legend class="w-auto px-2">密碼設定</legend>
+							<div class="form-group row">
+								<div class="col-sm-6 mb-3 mb-sm-0">
+									<label>請輸入密碼 :</label> <input type="password" id="password"
+										name="password" class="form-control form-control-user"
+										placeholder="Password" required>
+								</div>
+								<div class="col-sm-6">
+									<label>確認密碼 :</label> <input type="password" id="password2"
+										name="password2" class="form-control form-control-user"
+										placeholder="Repeat Password" required>
+								</div>
+							</div>
+						</fieldset>
+
+						<button type="submit" class="btn btn-primary btn-user btn-block">Register
+							Account</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--Logout Modal -->
+	<th:block th:replace="fragments/empLogoutModel :: logoutModel"></th:block>
+	<!-- Scripts -->
+	<script src="/js/jquery.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/sb-admin-2.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+	<script
+		src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap4.js"></script>
+
+
+	<script>
+    document.getElementById('downloadTemplateBtn').addEventListener('click', function () {
+        const csvContent =
+            `name,gender,nationalId,email,phoneNumber,password,jobTitle,entryTime,dateOfBirth,permissionLevel\n` +
+            `王小明,male,A123456789,ming@example.com,0912345678,test1234,經理,2023-04-01,1990-02-14,1\n` +
+            `陳美麗,female,B223456789,mei@example.com,0987654321,abc123,副理,2023-05-10,1985-06-30,2\n`;
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "employee_template.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    });
+
+    $('#csvUploadForm').submit(function (e) {
+        e.preventDefault();
+
+        const file = $('#csvFile')[0].files[0];
+        if (!file) {
+            Swal.fire('請選擇 CSV 檔案', '', 'warning');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        $.ajax({
+            url: '/employeeApi/importCsv',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                $('#csvUploadModal').modal('hide');
+
+                Swal.fire({
+                    title: '匯入成功',
+                    html: `總筆數：<strong>${res.totalCsvCount}</strong><br>成功新增：<strong>${res.insertedCount}</strong>`,
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonText: '下載成功名單',
+                    cancelButtonText: '關閉'
+                }).then((result) => {
+                    if (result.isConfirmed && res.insertedEmployees) {
+                        let csvData = "name,email\n";
+                        res.insertedEmployees.forEach(emp => {
+                            csvData += `${emp.name},${emp.email}\n`;
+                        });
+
+                        const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = "匯入成功名單.csv";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                    }
+                    location.reload();
+                });
+            },
+            error: function (xhr) {
+                $('#csvUploadModal').modal('hide');
+                let msg = xhr.responseJSON?.message || '匯入失敗，請確認檔案格式';
+                Swal.fire({
+                    title: '匯入失敗',
+                    text: msg,
+                    icon: 'error'
+                });
+            }
+        });
+    });
+</script>
+	<script>
+    $(document).ready(function () {
+        $('#jobTitle').change(function () {
+            const selected = $(this).val();
+            $('#selectedJobTitle').text("您選擇的職稱是：" + selected);
+        });
+
+        $('.register-form').submit(function (e) {
+            e.preventDefault();
+            let password = $('input[name="password"]').val();
+            let password2 = $('input[name="password2"]').val();
+            if (password !== password2) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '密碼不一致',
+                    text: '請確認兩次密碼輸入相同'
+                });
+                return;
+            }
+            $.ajax({
+                url: '/employeeApi/empRegister',
+                type: 'POST',
+                data: $('.register-form').serialize(),
+                success: function (response) {
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '註冊成功',
+                            html: `歡迎 <b>${response.name}</b> 加入我們！`,
+                            confirmButtonText: '關閉'
+                        }).then(() => {
+                            $('#registerModal').modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '註冊失敗',
+                            text: response.message || '請稍後再試'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '伺服器錯誤',
+                        text: '請稍後再試或聯絡客服'
+                    });
+                }
+            });
+        });
+    });
+</script>
+	<script>
+	$(document).ready(function () {
+	    $('#dataTable').DataTable({
+	        ajax: {
+	            url: '/employeeApi/listPage',
+	            dataSrc: ''
+	        },
+	        columns: [
+	            { data: 'name' },
+	            { data: 'gender' },
+	            { data: 'nationalId' },
+	            { data: 'email' },
+	            { data: 'phoneNumber' },
+	            { data: 'jobTitle' },
+	            { data: 'entryTime' },
+	            { data: 'dateOfBirth' },
+	            { data: 'permissionLevel' }
+	        ],
+	        language: {
+	            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json'
+	        }
+	    });
+	});
+</script>
+</body>
+</html>

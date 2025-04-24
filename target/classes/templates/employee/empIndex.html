@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="Cache-Control"
+	content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<title>光影之門後台系統</title>
+
+<!-- FontAwesome -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<link
+	href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+	rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+<link href="/css/bootstrap.css" rel="stylesheet">
+<style>
+#content-wrapper {
+	min-height: 100vh;
+}
+</style>
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<th:block th:replace="fragments/empSidebar :: sidebar"></th:block>
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Topbar -->
+
+				<th:block th:replace="fragments/empTopbar :: topbar"></th:block>
+				<!--End of Topbar -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+
+					<!-- Page Heading -->
+					<div
+						class="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 class="h3 mb-0 text-gray-800">員工後台系統-首頁</h1>
+						<!--                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i -->
+						<!--                                 class="fas fa-download fa-sm text-white-50"></i>列印報表</a> -->
+					</div>
+
+					<!-- Content Row 1 員工資料/權限 -->
+					<div class="row">
+
+						<div class="col-xl-6 col-md-6 mb-4"
+							th:if="${session.empDetail != null}">
+							<div class="card border-left-primary shadow h-100 py-2">
+								<div class="card-body">
+									<div class="row no-gutters align-items-center">
+										<!-- 左邊：文字資料 -->
+										<div class="col mr-2">
+											<div
+												class="fs-2 font-weight-bold text-primary text-uppercase mb-1 mt-3">員工資料</div>
+
+											<div
+												class="text-xs font-weight-bold text-primary text-uppercase mb-1 mt-3">姓名</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800">
+												<span th:text="${session.empDetail.name}"></span>
+											</div>
+
+											<div
+												class="text-xs font-weight-bold text-primary text-uppercase mb-1 mt-3">職稱</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800">
+												<span th:text="${session.empDetail.jobTitle}"></span>
+											</div>
+
+											<div
+												class="text-xs font-weight-bold text-primary text-uppercase mb-1 mt-3">入職時間</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800">
+												<span th:text="${session.empDetail.entryTime}"></span>
+											</div>
+
+											<div
+												class="text-xs font-weight-bold text-primary text-uppercase mb-1 mt-3">性別</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800">
+												<span th:text="${session.empDetail.gender}"></span>
+											</div>
+
+											<div
+												class="text-xs font-weight-bold text-primary text-uppercase mb-1 mt-3">手機號碼</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800">
+												<span th:text="${session.empDetail.phoneNumber}"></span>
+											</div>
+										</div>
+
+										<!-- 右邊：圖片 -->
+										<div class="col-auto text-center">
+											<img src="/imgs/malecostume512.jpg" alt="male costume icon"
+												class="img-fluid rounded-circle"
+												style="max-width: 100%; height: auto; width: 100%; max-width: 200px;">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Content Row 2 最新公告/注意事項 -->
+						<div class="col-xl-6 col-md-6 mb-4">
+							<!-- Project Card Example -->
+							<div class="card shadow mb-4">
+								<div class="card-header py-3">
+									<h6 class="m-0 font-weight-bold text-primary">最新公告</h6>
+								</div>
+								<div class="card-body">
+									<ul class="list-unstyled">
+										<li class="mb-3">
+											<h6 class="font-weight-bold text-dark mb-1">【系統維護通知】</h6>
+											<p class="mb-0 text-gray-700 small">系統將於 2025/04/23（週三）凌晨
+												01:00~03:00 維護，請提早完成相關操作。</p>
+										</li>
+										<li class="mb-3">
+											<h6 class="font-weight-bold text-dark mb-1">【新片上映】</h6>
+											<p class="mb-0 text-gray-700 small">《未來戰士：破曉之刃》將於
+												2025/04/26 全台上映，內部觀影邀請信已寄出。</p>
+										</li>
+										<li class="mb-3">
+											<h6 class="font-weight-bold text-dark mb-1">【招募公告】</h6>
+											<p class="mb-0 text-gray-700 small">行銷部招募社群實習生 2 名，請於
+												04/30 前將履歷寄至 HR 部。</p>
+										</li>
+										<li class="mb-3">
+											<h6 class="font-weight-bold text-dark mb-1">【票務系統更新】</h6>
+											<p class="mb-0 text-gray-700 small">票務系統新增快速退票功能，自 04/22
+												起正式上線。</p>
+										</li>
+										<li class="mb-3">
+											<h6 class="font-weight-bold text-dark mb-1">【員工福利通知】</h6>
+											<p class="mb-0 text-gray-700 small">五月壽星電影票每人可領 2 張，請於
+												04/30 前至人資部登記。</p>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<th:block th:replace="fragments/empFooter :: footer"></th:block>
+			<!-- End of Main Content -->
+		</div>
+	</div>
+	<!-- End of Page Wrapper -->
+
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top"> <i
+		class="fas fa-angle-up"></i>
+	</a>
+	<!--Logout Modal -->
+	<th:block th:replace="fragments/empLogoutModel :: logoutModel"></th:block>
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script src="/js/jquery.js"></script>
+	<script src="/js/bootstrap.bundle.js"></script>
+	<!-- Custom scripts for all pages-->
+	<script src="/js/sb-admin-2.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<!-- 	<script src="/js/empSessionCheck.js"></script> -->
+	<!-- 	<script src="/js/empSessionStatus.js"></script> -->
+
+
+	<th:block th:if="${notLogin}">
+		<script th:inline="javascript">
+        Swal.fire({
+            icon: 'warning',
+            title: '尚未登入',
+            text: '請先登入員工帳號',
+            confirmButtonText: '知道了',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/employee/empLogin';
+            }
+        });
+    </script>
+	</th:block>
+
+</body>
+
+</html>

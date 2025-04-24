@@ -1,0 +1,285 @@
+@charset "UTF-8";
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background: black;
+	/* Use the black background from index.css */
+	color: white;
+	/* Use the white text color from index.css */
+	font-size: 15px;
+	line-height: 1.5;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	min-height: 100vh;
+	padding-top: 40px;
+}
+
+.container {
+	/* Mimic the container from index.css */
+	width: 90%;
+	max-width: 1100px;
+	margin: 20px auto;
+}
+
+.cinema {
+	background-color: #262626;
+	/* A darker background for the cinema section */
+	padding: 30px;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+	/* A bit stronger shadow for better definition */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 30px;
+}
+
+form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 20px;
+	width: 100%;
+	justify-content: center;
+}
+
+form input[type="text"], form select, form button {
+	padding: 10px 15px;
+	border: 1px solid #444;
+	/* Darker border */
+	border-radius: 5px;
+	font-size: 1em;
+	background-color: #333;
+	/* Dark input background */
+	color: white;
+}
+
+form input[type="text"]::placeholder {
+	color: #777;
+}
+
+form select {
+	appearance: none;
+	background-image:
+		url('data:image/svg+xml;utf8,<svg fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+	background-repeat: no-repeat;
+	background-position-x: 98%;
+	background-position-y: 50%;
+	background-size: 0.8em;
+}
+
+form button {
+	background-color: #007bff;
+	/* Keep a distinct button color */
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+form button:hover {
+	background-color: #0056b3;
+}
+
+.screen {
+	background-color: #4e4e4e;
+	/* Darker screen */
+	height: 50px;
+	width: 80%;
+	margin: 20px 0;
+	transform: rotateX(-45deg);
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30px;
+	border-radius: 5px;
+	text-align: center;
+}
+
+.seating-chart {
+	margin-top: 30px;
+	perspective: 800px;
+	width: 95%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.row {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 8px;
+	align-items: center;
+	width: 100%;
+}
+
+.seat-label {
+	width: 30px;
+	margin-right: 10px;
+	text-align: right;
+	font-weight: bold;
+	color: #ddd;
+	/* Lighter label for dark background */
+}
+
+.seat {
+	background-color: #5cb85c;
+	/* Green (available) */
+	height: 28px;
+	width: 32px;
+	margin: 4px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	transition: background-color 0.3s ease, transform 0.2s ease;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 0.8em;
+	color: #fff;
+}
+
+.seat.available {
+	background-color: #5cb85c;
+	cursor: pointer;
+}
+
+.seat.selected {
+	background-color: #007bff;
+	/* Blue (selected) */
+	cursor: pointer;
+}
+
+.seat.occupied {
+	background-color: #d9534f;
+	/* Red (occupied) */
+	cursor: not-allowed;
+	color: #eee;
+}
+
+.seat.available:hover, .seat.selected:hover {
+	transform: scale(1.1);
+}
+
+.legend {
+	display: flex;
+	justify-content: center;
+	list-style-type: none;
+	padding: 15px 0;
+	margin-top: 30px;
+	background-color: #333;
+	/* Dark legend background */
+	border-radius: 5px;
+	width: 80%;
+}
+
+.legend li {
+	display: flex;
+	align-items: center;
+	margin: 0 15px;
+	color: #ddd;
+	/* Lighter text for legend */
+}
+
+.legend .seat {
+	height: 20px;
+	width: 20px;
+	margin-right: 8px;
+	cursor: default;
+	border-radius: 5px;
+	font-size: 0.7em;
+}
+
+.legend .seat.available:hover, .legend .seat.selected:hover, .legend .seat.occupied:hover
+	{
+	transform: none;
+}
+
+.summary {
+	margin-top: 30px;
+	text-align: center;
+	font-size: 1.1em;
+	color: #ddd;
+}
+
+.summary p {
+	margin: 8px 0;
+}
+
+.summary span {
+	font-weight: bold;
+	color: #007bff;
+}
+
+.ok {
+	background-color: #5cb85c;
+	height: 20px;
+	width: 20px;
+	margin-right: 8px;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+.sele {
+	background-color: #007bff;
+	height: 20px;
+	width: 20px;
+	margin-right: 8px;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+.red {
+	background-color: #d9534f;
+	height: 20px;
+	width: 20px;
+	margin-right: 8px;
+	border-radius: 5px;
+	display: inline-block;
+}
+
+.da {
+	font-size: 20px;
+}
+
+.ud {
+	pointer-events: none;
+}
+
+#new {
+	box-shadow: 0px 10px 14px -7px #3e7327;
+	background: linear-gradient(to bottom, #77b55a 5%, #72b352 100%);
+	background-color: #77b55a;
+	border-radius: 4px;
+	border: 1px solid #4b8f29;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 22px;
+	font-weight: bold;
+	padding: 6px 12px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #5b8a3c;
+}
+
+#new:hover {
+	background: linear-gradient(to bottom, #72b352 5%, #77b55a 100%);
+	background-color: #72b352;
+}
+
+#new:active {
+	position: relative;
+	top: 1px;
+}

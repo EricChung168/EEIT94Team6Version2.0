@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- DataTables CSS -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+<!-- Bootstrap CSS -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet" />
+<style>
+#bodddd {
+	width: 90%;
+	height: 100px;
+	float: right;
+	padding: 20px;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+li {
+	list-style: none;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 18px;
+	color: #ffd700;
+	background-color: #222;
+	width: 80%;
+	height: 60px;
+	margin: 5px 0;
+	margin-left: 10%;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	justify-content: center;
+}
+
+li:hover {
+	background-color: #ffcc00;
+	color: #000;
+	transform: scale(1.1);
+}
+
+li i {
+	font-size: 24px;
+	transition: all 0.3s ease;
+}
+
+li:active {
+	position: relative;
+	top: 2px;
+	background-color: #b22222;
+	color: #fff;
+}
+
+figure {
+	float: left;
+	background-color: #000;
+	padding: 20px 0;
+	font-size: 100px;
+	color: #ffd700;
+	width: 10%;
+	height: 1000px;
+	text-align: center;
+}
+
+.one {
+	margin-top: 100px;
+}
+
+ul {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding-left: 0;
+}
+
+li a {
+	display: block;
+	width: 100%;
+	padding: 10px;
+	text-decoration: none;
+	color: black;
+}
+
+li a:active {
+	position: relative;
+	top: 2px;
+	background-color: transparent;
+	color: white;
+}
+
+.clock {
+	color: #ffd700;
+	font-size: 20%;
+	letter-spacing: 7px;
+	padding-top: 10px;
+}
+
+#new {
+	font-size: 30px;
+}
+
+#new:hover {
+	background-color: yellow;
+}
+
+body {
+	background-color: #9fa19d;
+	font-family: Arial, sans-serif;
+}
+
+a {
+	text-decoration: none;
+}
+
+.header {
+	font-family: "Orbitron", sans-serif;
+	font-optical-sizing: auto;
+}
+
+.header {
+	font-family: "Orbitron", sans-serif;
+	border: 2px double #ffd700;
+	font-size: 50px;
+	background: #000;
+	color: #fff;
+	text-align: center;
+	padding: 20px;
+	text-shadow: 0.1em 0.1em 0.2em #fff;
+}
+
+.h1 {
+	text-shadow: 0.1em 0.1em 0.2em gray;
+}
+
+.myButton {
+	box-shadow: 3px 4px 0px 0px #1564ad;
+	background: linear-gradient(to bottom, #79bbff 5%, #378de5 100%);
+	background-color: #79bbff;
+	border-radius: 5px;
+	border: 1px solid #337bc4;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 10px;
+	font-weight: bold;
+	padding: 8.5px 29px;
+	text-decoration: none;
+	text-shadow: 0px 0px 0px #528ecc;
+}
+
+.myButton:hover {
+	background: linear-gradient(to bottom, #378de5 5%, #79bbff 100%);
+	background-color: #378de5;
+}
+
+.myButton:active {
+	position: relative;
+	top: 1px;
+}
+
+#new {
+	box-shadow: 0px 10px 14px -7px #3e7327;
+	background: linear-gradient(to bottom, #77b55a 5%, #72b352 100%);
+	background-color: #77b55a;
+	border-radius: 4px;
+	border: 1px solid #4b8f29;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 22px;
+	font-weight: bold;
+	padding: 6px 12px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #5b8a3c;
+}
+
+#new:hover {
+	background: linear-gradient(to bottom, #72b352 5%, #77b55a 100%);
+	background-color: #72b352;
+}
+
+#new:active {
+	position: relative;
+	top: 1px;
+}
+
+#dell {
+	box-shadow: inset 0px 1px 0px 0px #f5978e;
+	background: linear-gradient(to bottom, #f24537 5%, #c62d1f 100%);
+	background-color: #f24537;
+	border-radius: 6px;
+	border: 1px solid #d02718;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 6px 24px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #810e05;
+}
+
+#dell:hover {
+	background: linear-gradient(to bottom, #c62d1f 5%, #f24537 100%);
+	background-color: #c62d1f;
+}
+
+#dell:active {
+	position: relative;
+	top: 1px;
+}
+
+#upda {
+	box-shadow: inset 0px 1px 3px 0px #91b8b3;
+	background: linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
+	background-color: #768d87;
+	border-radius: 5px;
+	border: 1px solid #566963;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 6px 24px;
+	text-decoration: none;
+	text-shadow: 0px -1px 0px #2b665e;
+}
+
+#upda:hover {
+	background: linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
+	background-color: #6c7c7c;
+}
+
+#upda:active {
+	position: relative;
+	top: 1px;
+}
+
+.form-controlaa {
+	width: 13%;
+	height: 34px;
+	padding: 0;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow
+		ease-in-out 0.15s;
+	-o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out
+		0.15s;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+#tise {
+	font-size: 20px;
+	font-weight: 800;
+}
+
+input {
+	padding: 10px;
+	border: solid 0.1px black;
+	border-radius: 35px;
+	background-color: #fff;
+	outline: none;
+}
+</style>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+	href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap"
+	rel="stylesheet" />
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css" />
+<!--link rel="stylesheet" href="/resources/demos/style.css"-->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css" />
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+	integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<title>電影場次列表</title>
+</head>
+
+<body th:data-loggedin="${session.memberDetail != null}">
+	<div th:replace="~{laout/tableremack}"></div>
+	<div id="bodddd">
+
+	<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">查詢電影場次</h4>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addShowtimeModal">新增場次</button>
+    </div>
+    
+
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <form id="searchForm" class="row g-3">
+                <div class="col-md-4">
+                    <label for="filterDate" class="form-label">日期</label>
+                    <input type="date" id="filterDate" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label for="filterMovie" class="form-label">電影</label>
+                    <select id="filterMovie" class="form-select">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="filterTheater" class="form-label">影廳</label>
+                    <select id="filterTheater" class="form-select">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary w-100">查詢</button>
+                </div>
+            </form>
+
+            <hr>
+
+            <div class="table-responsive">
+                <table id="showtimeTable" class="table table-bordered mt-3 text-center align-middle">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>日期</th>
+                            <th>電影</th>
+                            <th>影廳</th>
+                            <th>播放時間</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTableBody">
+                        <tr><td colspan="4">請輸入條件進行查詢</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新增場次 Modal -->
+<div class="modal fade" id="addShowtimeModal" tabindex="-1" aria-labelledby="addShowtimeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addShowtimeModalLabel">新增電影場次</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+            </div>
+            <div class="modal-body">
+                <form id="showtimeForm">
+                    <div class="mb-3">
+                        <label for="showdate" class="form-label">日期</label>
+                        <input type="date" class="form-control" id="showdate" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="theater" class="form-label">影廳</label>
+                        <select class="form-select" id="theater" required></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="movie" class="form-label">電影</label>
+                        <select class="form-select" id="movie" required></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="showtime" class="form-label">播放時間</label>
+                        <input type="time" class="form-control" id="showtime" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">新增場次</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/jquery.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function loadMovies(target) {
+        $.get("/movies/available", function (movies) {
+            const select = $(target);
+            select.empty();
+            select.append(`<option value="">全部</option>`);
+            movies.forEach(movie => {
+                select.append(`<option value="${movie.id}">${movie.name}</option>`);
+            });
+        });
+    }
+
+    function loadTheaters() {
+        $.get("/showtime/theaters", function (theaters) {
+            const select = $("#theater");
+            select.empty();
+            theaters.forEach(t => {
+                select.append(`<option value="${t.theaterid}">${t.name}</option>`);
+            });
+        });
+    }
+
+    function loadTheatersDropdown(target) {
+        $.get("/showtime/theaters", function (theaters) {
+            const select = $(target);
+            select.empty().append('<option value="">全部</option>');
+            theaters.forEach(t => {
+                select.append(`<option value="${t.theaterid}">${t.name}</option>`);
+            });
+        });
+    }
+    
+    function deleteShowtime(id) {
+        if (!confirm("確定要刪除此場次嗎？")) return;
+
+        $.ajax({
+            url: `/showtime/delete/${id}`,
+            type: "DELETE",
+            success: function () {
+                alert("刪除成功！");
+                searchShowtimes(); // 重新查詢場次
+            },
+            error: function (xhr) {
+                alert("刪除失敗：" + xhr.responseText);
+            }
+        });
+    }
+
+    function searchShowtimes() {
+        const date = $("#filterDate").val();
+        const movieId = $("#filterMovie").val();
+        const theaterId = $("#filterTheater").val();
+        const queryParams = {};
+
+        if (date) queryParams.date = date;
+        if (movieId) queryParams.movieId = movieId;
+        if (theaterId) queryParams.theaterId = theaterId;
+
+        $.ajax({
+            url: "/viewdata/search",
+            type: "GET",
+            data: queryParams,
+            success: function (showtimes) {
+                const tbody = $("#resultTableBody").empty();
+
+                if (showtimes.length === 0) {
+                    tbody.append(`<tr><td colspan="4">查無資料</td></tr>`);
+                    return;
+                }
+
+                showtimes.forEach(s => {
+                    tbody.append(`
+                        <tr>
+                            <td>${s.showDate}</td>
+                            <td>${s.movieName}</td>
+                            <td>${s.theaterName}</td>
+                            <td>${s.showTime.substring(0,5)}</td>
+                            <td>
+                            <button class="btn btn-sm btn-danger" onclick="deleteShowtime(${s.showtimeId})">刪除</button>
+                        </td>
+                        </tr>
+                    `);
+                });
+            },
+            error: function (xhr) {
+                alert("查詢錯誤：" + xhr.responseText);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadMovies("#filterMovie");
+        loadMovies("#movie");
+        loadTheaters();
+        loadTheatersDropdown("#filterTheater");
+
+        $("#searchForm").submit(function (e) {
+            e.preventDefault();
+            searchShowtimes();
+        });
+
+        $("#showtimeForm").submit(function (e) {
+            e.preventDefault();
+
+            const requestData = {
+                movieList: { id: $("#movie").val() },
+                movietheater: { theaterid: $("#theater").val() },
+                showdate: $("#showdate").val(),
+                showtime: $("#showtime").val()
+            };
+
+            $.ajax({
+                url: "/showtime/add",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(requestData),
+                success: function (res) {
+                    alert(res);
+                    $("#showtimeForm")[0].reset();
+                    bootstrap.Modal.getInstance(document.getElementById("addShowtimeModal")).hide();
+                    searchShowtimes(); // 新增後自動重新查詢更新結果
+                },
+                error: function (xhr) {
+                    alert("錯誤：" + xhr.responseText);
+                }
+            });
+        });
+        
+    });
+</script>
+        </div>
+
+</body>
+</html>
+

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="Cache-Control"
+	content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<title>光影之門後台系統</title>
+
+<!-- Custom fonts for this template-->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+	integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link
+	href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+<!-- Custom styles for this template-->
+<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<th:block th:replace="fragments/empSidebar :: sidebar"></th:block>
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Topbar -->
+
+				<th:block th:replace="fragments/empTopbar :: topbar"></th:block>
+				<!--End of Topbar -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+
+					<!-- Page Heading -->
+					<div
+						class="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 class="h3 mb-0 text-gray-800">員工後台系統-訂票管理</h1>
+						<!--                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i -->
+						<!--                         class="fas fa-download fa-sm text-white-50"></i>列印</a> -->
+					</div>
+
+					<div class="row justify-content-center">
+						<div class="col-md-10">
+							<div class="card shadow mb-4">
+								<div class="card-header py-3">
+									<h5 class="m-0 font-weight-bold text-primary">新增訂票</h5>
+								</div>
+								<div class="card-body">
+									<form class="form-horizontal" action="inser" method="post"
+										id="contact_form">
+										<fieldset>
+
+											<!-- 會員 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">會員</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-user"></i></span>
+														</div>
+														<input name="memberId" placeholder="會員"
+															class="form-control" type="text">
+													</div>
+												</div>
+											</div>
+
+											<!-- 日期 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">日期</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-calendar-days"></i></span>
+														</div>
+														<input type="text" id="datepicker" class="form-control"
+															placeholder="日期">
+													</div>
+												</div>
+											</div>
+
+											<!-- 場次 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">場次</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-clock"></i></span>
+														</div>
+														<select name="showtimeid" class="form-control" id="time">
+															<option value="">場次</option>
+														</select>
+													</div>
+												</div>
+											</div>
+
+											<!-- 電影名稱 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">電影名稱</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-film"></i></span>
+														</div>
+														<select name="movieid" class="form-control" id="moviename">
+															<option value="">電影</option>
+														</select>
+													</div>
+												</div>
+											</div>
+
+											<!-- 廳 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">廳</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-house"></i></span>
+														</div>
+														<input class="form-control" id="halls" name="hallid"
+															value="" placeholder="廳">
+													</div>
+												</div>
+											</div>
+
+											<!-- 座位 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">座位</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-chair"></i></span>
+														</div>
+														<select name="seatid" class="form-control" id="seat">
+															<option value="">座位</option>
+														</select>
+													</div>
+												</div>
+											</div>
+
+											<!-- 票種 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">票種</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-ticket"></i></span>
+														</div>
+														<select name="tickettypeid" class="form-control" id="type">
+															<option value="">票種</option>
+														</select>
+													</div>
+												</div>
+											</div>
+
+											<!-- 單價 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">單價</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-coins"></i></span>
+														</div>
+														<input name="onemoney" placeholder="單價"
+															class="form-control" type="text" id="money">
+													</div>
+												</div>
+											</div>
+
+											<!-- 是否付款 -->
+											<div class="form-group row">
+												<label class="col-md-3 col-form-label text-md-right">是否付款</label>
+												<div class="col-md-8">
+													<div class="input-group">
+														<div class="input-group-prepend">
+															<span class="input-group-text"><i
+																class="fa-solid fa-money-bill-wave"></i></span>
+														</div>
+														<select name="payout" class="form-control">
+															<option value="">是否付款</option>
+															<option value="Y">已付</option>
+															<option value="N">未付</option>
+														</select>
+													</div>
+												</div>
+											</div>
+
+											<!-- 送出按鈕 -->
+											<div class="form-group row">
+												<div class="col-md-3"></div>
+												<div class="col-md-8">
+													<button class="btn btn-warning" id="seed">
+														Send <i class="fa-solid fa-paper-plane"></i>
+													</button>
+												</div>
+											</div>
+
+										</fieldset>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- End of Main Content -->
+				</div>
+				<!-- Footer -->
+				<th:block th:replace="fragments/empFooter :: footer"></th:block>
+				<!-- End of Footer -->
+			</div>
+		</div>
+		<!-- End of Content Wrapper -->
+	</div>
+	<!-- End of Page Wrapper -->
+
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top"> <i
+		class="fas fa-angle-up"></i>
+	</a>
+	<!--Logout Modal -->
+	<th:block th:replace="fragments/empLogoutModel :: logoutModel"></th:block>
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+	<script src="/js/bootstrap.bundle.min.js"></script>
+	<!-- Custom scripts for all pages-->
+	<script src="/js/sb-admin-2.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="/js/empSessionCheck.js"></script>
+	<script src="/js/empSessionStatus.js"></script>
+
+	<script th:inline="javascript">
+		$(function () {
+			$("#datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
+			$("#from-datepicker").on("change", function () {
+				var fromdate = $(this).val();
+				alert(fromdate);
+			});
+			//點選日期改時間
+			$("#datepicker").on("change", function () {
+				let selectdate = $("#datepicker").val();
+				console.log(selectdate)
+				$("#time").empty();
+				$.ajax({
+					url: '/booktick/time/' + selectdate,
+
+					dataType: 'json',
+					type: 'post',
+					contentType: 'application/json',
+					success: function (respones) {
+						$('#time').append(`<option value="">場次</option>`);
+						$.each(respones, function (i, e) {
+							let time = e.showtime.split('.')[0]
+							$('#time').append(`<option value="${e.showtimeid}">${time}</option>`)
+						})
+					}
+
+				})
+			});
+			//ready畫面加載預設時間
+
+			///
+			//廳
+			// function name() {
+			// 	$('#moviename').empty();
+			// 	let hall = $("#halls").val();
+			// 	$.ajax({
+			// 		url: '/booktick/name',
+			// 		data: { hallid: hall },
+			// 		dataType: 'json',
+			// 		type: 'GET',
+			// 		success: function (respones) {
+
+
+			// 			$('#moviename').append(`<option value="${respones.movieid}">${respones.moviename}</option>`)
+
+
+			// 		}
+			// 	})
+			// }
+
+			// $("#halls").on("change", function () {
+			// 	name();
+			// 	$('#moviename').empty();
+			// })
+
+
+			$(document).ready(function () {
+
+				$.ajax({
+					url: '/booktick/hall',
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						$.each(respones, function (i, e) {
+							//console.log(e.hallid);
+
+							$('#moviename').append(`<option value="${e.movieid}">${e.moviename}</option>`)
+						});
+					}
+				})
+			});
+
+			//////
+			function loadseat() {
+				let selecttime = $("#time").val();
+				let selecthall = $("#halls").val();
+				console.log(selecthall);
+
+
+				$("#seat").empty();
+				let soldSeats = [];
+				$.ajax({
+					url: '/booktick/seat',
+					data: { showtimeid: selecttime, hallid: selecthall },
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						$.each(respones, function (i, e) {
+							console.log(e.seatid);
+
+							soldSeats.push(e.seatid);
+						})
+						let allSeats = [];
+						// 生成所有座位 (假設 5 排，每排 5 個座位)
+						for (let row of ["A", "B", "C", "D", "E"]) {
+							for (let col = 1; col <= 10; col++) {
+								allSeats.push(row + col);
+							}
+						}
+						// 取得 <select> 元素
+						// let select = document.getElementById("seat");
+						// 過濾出尚未售出的座位
+						let availableSeats = allSeats.filter(seat => !soldSeats.includes(seat));
+						// 生成 <option> 並添加到 <select>
+						availableSeats.forEach(function (seat) {
+
+
+
+							$('#seat').append(`<option value="${seat}">${seat}</option>`)
+
+						})
+					},
+					error: function () { console.log('sate') }
+				})
+			};
+
+			$("#moviename").on("change", function () {
+				$('#hallid').empty();
+				let selectmovie = $(this).val();
+
+				$.ajax({
+					url: '/booktick/name',
+					data: { nameid: selectmovie },
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						console.log(respones);
+
+						$('#halls').val(respones.hallid);
+
+
+					}
+				})
+
+			});
+			$('#moviename').on("change", function () {
+
+				setTimeout(loadseat, 100);
+
+			});
+
+
+
+
+
+
+
+
+
+			let money = [];
+
+			function moneyse() {
+				let tp = $('#type').val();
+				let time = $('#time').text();
+				//console.log(time)
+				let mf = 0
+				if (tp == 1) {
+
+					mf = money[tp - 1];
+					$("#money").val(mf)
+					console.log()
+				}
+				else if (tp == 2) {
+
+					mf = money[tp - 1];
+					$("#money").val(mf)
+				}
+				else if (tp == 3) {
+
+					mf = money[tp - 1];
+					$("#money").val(mf)
+				} else if (tp == 4) {
+
+					mf = money[tp - 1];
+					$("#money").val(mf)
+				}
+			}
+
+
+			$(document).ready(function () {
+
+				$.ajax({
+					url: '/booktick/type',
+					dataType: 'json',
+					type: 'GET',
+					success: function (respones) {
+						$.each(respones, function (i, e) {
+
+
+							//console.log(ticktyp)
+							let se = e.tickettypeid
+
+							//console.log(ticktyp)
+							//console.log(se)
+							//console.log(selectty)
+							$('#type').append(`<option value="${e.tickettypeid}">${e.tickettype}</option>`)
+							money.push(e.moneytype)
+							moneyse();
+						})
+					}
+				})
+			});
+
+			$('#type').on("change", function () {
+				moneyse();
+			})
+
+
+			//////////////////
+		})
+
+
+
+
+
+	</script>
+	<th:block th:if="${notLogin}">
+		<script th:inline="javascript">
+        Swal.fire({
+            icon: 'warning',
+            title: '尚未登入',
+            text: '請先登入員工帳號',
+            confirmButtonText: '知道了',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/employee/empLogin';
+            }
+        });
+    </script>
+	</th:block>
+
+</body>
+
+</html>

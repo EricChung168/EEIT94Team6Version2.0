@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<!-- 登入 Modal -->
+	<div th:fragment="login" class="modal fade" id="loginModal"
+		tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content shadow-lg">
+				<div class="row g-0">
+
+					<!-- 左側圖片區 -->
+					<div class="col-lg-6 d-none d-lg-block"
+						style="background: url('/imgs/login-banner.png') center/cover no-repeat; border-top-left-radius: 0.3rem; border-bottom-left-radius: 0.3rem;"></div>
+
+					<!-- 右側表單區 -->
+					<div class="col-lg-6">
+						<div class="modal-header border-0">
+							<h5 class="modal-title w-100 text-center" id="loginModalLabel">光影之門會員登入</h5>
+							<button type="button"
+								class="btn-close position-absolute end-0 top-0 m-3"
+								data-bs-dismiss="modal" aria-label="關閉"></button>
+						</div>
+						<div class="modal-body p-4">
+							<form class="user login-form">
+
+								<div class="form-group mb-3">
+									<label class="form-label">帳號 (Email):</label> <input
+										type="email" name="email"
+										class="form-control form-control-user"
+										placeholder="Enter Email Address..." required>
+								</div>
+
+								<div class="form-group mb-3">
+									<label class="form-label">密碼 (Password):</label> <input
+										type="password" name="password"
+										class="form-control form-control-user" placeholder="Password"
+										required>
+								</div>
+
+								<div class="form-group mb-4">
+									<div class="custom-control custom-checkbox small">
+										<input type="checkbox" class="custom-control-input"
+											id="customCheckModal"> <label
+											class="custom-control-label" for="customCheckModal">記住登入資訊</label>
+									</div>
+								</div>
+
+								<button type="submit"
+									class="btn btn-primary btn-block w-100 mb-3" style="background-color: #64b5f6;">Login</button>
+
+								<hr>
+								<!-- Google 淡紅色按鈕 -->
+								<a href="#" class="btn w-100 mb-2 text-white"
+									style="background-color: #e57373;"> <i
+									class="fab fa-google fa-fw me-2"></i> 使用 Google 登入
+								</a>
+
+								<!-- Facebook 淡藍色按鈕 -->
+								<a href="#" class="btn w-100 text-white"
+									style="background-color: #64b5f6;"> <i
+									class="fab fa-facebook-f fa-fw me-2"></i> 使用 Facebook 登入
+								</a>
+							</form>
+
+							<div class="text-center mt-3">
+								<a class="small" th:href="@{/member/forgotPassword}">忘記密碼？</a>
+							</div>
+							<div class="text-center">
+								<a class="small" th:href="@{/member/register}">註冊一個新的帳號</a>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

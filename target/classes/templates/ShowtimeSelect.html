@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:inline="javascript">
+<head>
+<meta charset="UTF-8">
+<title>光影之門場次查詢</title>
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+<!-- FontAwesome -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+<!-- 你的自定義樣式 -->
+<link rel="stylesheet" href="/css/index.css" />
+<link rel="stylesheet" href="/css/footer.css">
+
+<style>
+body {
+	padding-top: 80px; /* 避開 fixed-top navbar */
+}
+
+.navbar .nav-link {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+#scheduleList .card {
+	border-left: 4px solid #d63384;
+}
+
+#scheduleList .card-title {
+	font-weight: bold;
+	font-size: 1.25rem;
+}
+
+#scheduleList .btn-outline-warning {
+	min-width: 60px;
+}
+
+.btn-outline-warning {
+    background-color: transparent;
+    color: #ffc107;
+    border: 1px solid #ffc107;
+  }
+
+  /* 禁用所有按鈕的 hover 效果 */
+  .btn-outline-warning:hover {
+    background-color: transparent;
+    color: #ffc107;
+    border-color: #ffc107;
+  }
+
+#scheduleList .card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: 0.375rem;  /* 保持 Bootstrap 卡片左上角圓角 */
+  border-bottom-left-radius: 0.375rem;
+}
+</style>
+</head>
+<body th:data-loggedin="${session.memberDetail != null}">
+	<!-- 載入 Bootstrap navbar fragment -->
+	<th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+
+	<!-- 主內容區與 footer 保留不變 -->
+	<div class="container">
+
+		<!-- 場次查詢區塊 -->
+		<section class="mt-5 mb-5">
+			<h3 class="mb-4">時刻表</h3>
+			<form class="row g-3 align-items-center mb-4" id="scheduleSearchForm">
+				<div class="col-md-5">
+					<select class="form-select" id="movieSelect">
+						<option value="">—請選擇電影—</option>
+					</select>
+				</div>
+				<div class="col-md-4">
+					<input type="date" class="form-control" id="dateSelect">
+				</div>
+				<div class="col-md-3">
+					<button type="button" class="btn btn-danger w-100" id="searchBtn">查詢</button>
+				</div>
+			</form>
+			<div id="scheduleList" class="d-flex flex-column gap-4"></div>
+		</section>
+
+		<!-- 關於電影院 -->
+		<section class="carbon dark">
+			<div class="content">
+				<h2>光影之門電影院</h2>
+				<p>光影之門電影院，創立於 2001 年，致力於打造沉浸式觀影體驗，讓光影交織夢想，為每一位觀眾呈現極致視聽盛宴。</p>
+				<a href="#" class="btn">了解我們 <i class="fas fa-chevron-right"></i></a>
+			</div>
+		</section>
+
+		<!-- 社群連結 -->
+		<section class="follow">
+			<p>Follow Us</p>
+			<a href="https://facebook.com"><img src="/imgs/social-fb.png"
+				alt="Facebook"></a> <a href="https://twitter.com"><img
+				src="/imgs/social-twitter.png" alt="Twitter"></a> <a
+				href="https://linkedin.com"><img src="/imgs/social-linkedin.png"
+				alt="Linkedin"></a>
+		</section>
+
+	</div>
+	<th:block th:replace="~{fragments/loginPage :: login}"></th:block>
+	<!-- 載入 footer fragment -->
+	<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+	
+	<!-- Bootstrap JS -->
+	<script src="/js/jquery.js"></script>
+	<script src="/js/bootstrap.bundle.min.js"></script>
+	<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+	<script src="/js/sb-admin-2.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+	<!-- 場次查詢功能 -->
+	<script>
+    $(document).ready(function () {
+      // 填入電影選項
+      $.get('/movies/available', function (movies) {
+        movies.forEach(movie => {
+          $('#movieSelect').append(`<option value="${movie.id}">${movie.name}</option>`);
+        });
+      });
+
+      $('#searchBtn').on('click', function () {
+    	  const movieId = $('#movieSelect').val();
+    	  const date = $('#dateSelect').val();
+
+    	  if (!date) {
+    	    Swal.fire("請選擇日期");
+    	    return;
+    	  }
+
+    	  // 組查詢參數
+    	  let query = movieId ? { movieId, date } : { date };
+
+    	  $.get('/showtime/search', query, function (data) {
+    	    $('#scheduleList').empty();
+
+    	    if (data.length === 0) {
+    	      $('#scheduleList').html("<p class='text-muted'>查無場次</p>");
+    	      return;
+    	    }
+
+    	    const groupedByMovie = data.reduce((acc, cur) => {
+    	      (acc[cur.movieName] = acc[cur.movieName] || []).push(cur);
+    	      return acc;
+    	    }, {});
+
+    	    for (const [movieName, sessions] of Object.entries(groupedByMovie)) {
+    	      const movie = sessions[0];
+    	      const times = sessions.map(s => {
+    	        const formattedTime = s.showTime.substring(0, 5); // 取 "HH:mm"
+    	        return `<button class='btn btn-outline-warning btn-sm'>${formattedTime}</button>`;
+    	      }).join(' ');
+    	      const card = `
+    	        <div class="card shadow-sm">
+    	          <div class="row g-0">
+    	            <div class="col-md-2">
+    	              <img src="/movie/images/${movie.posterUrl}" class="img-fluid rounded-start" alt="電影海報">
+    	            </div>
+    	            <div class="col-md-10">
+    	              <div class="card-body">
+    	                <h5 class="card-title mb-1">${movie.movieName}</h5>
+    	                <p class="mb-2 text-muted">上映日期：${movie.releaseDate}｜片長：${movie.duration}｜級數：${movie.level}</p>
+    	                <div class="d-flex flex-wrap gap-2">${times}</div>
+    	              </div>
+    	            </div>
+    	          </div>
+    	        </div>`;
+    	      $('#scheduleList').append(card);
+    	    }
+    	  });
+    	});
+    });
+  </script>
+  <script th:if="${logoutSuccess}">
+  		Swal.fire({
+  			icon: 'success',
+  			title: '登出成功',
+  			text: '您已成功登出！',
+  			confirmButtonText: '確認',
+  			timer: 3000,
+  			timerProgressBar: true
+  		});
+  	</script>
+
+		
+  	<script src="/js/loginPage.js"></script>
+	
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!-- member/verifySuccess.html -->
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>驗證成功 - 光影之門</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gradient-primary">
+
+<!-- 用 data-* 屬性存放 Thymeleaf 的 model 值 -->
+<div id="verify-message" th:attr="data-msg=${message}"></div>
+
+<script>
+  const message = document.getElementById('verify-message').dataset.msg;
+
+  Swal.fire({
+    icon: 'success',
+    title: '驗證成功',
+    text: message,
+    confirmButtonText: '前往登入',
+    allowOutsideClick: false,
+    allowEscapeKey: false
+  }).then(() => {
+    localStorage.setItem("autoShowLogin", "true");
+    window.location.href = "/";
+  });
+</script>
+
+</body>
+</html>

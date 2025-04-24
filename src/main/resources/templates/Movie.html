@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control"
+	content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>電影管理 - 光影之門</title>
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Nunito"
+	rel="stylesheet">
+<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+ <link href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+
+</head>
+<body id="page-top">
+	<div id="wrapper">
+		<th:block th:replace="fragments/empSidebar :: sidebar"></th:block>
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content">
+				<th:block th:replace="fragments/empTopbar :: topbar"></th:block>
+
+				<div class="container-fluid mt-4">
+					<div
+						class="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 class="h3 mb-0 text-gray-800">員工後台系統-電影資料列表</h1>
+						<div class="d-flex">
+							<a href="/showtime" class="btn btn-success mr-2" id="sessionQueryBtn">查詢電影場次</a>
+							<button class="btn btn-success mr-2" id="addMovieBtn">新增電影</button>
+							<button type="button" class="btn btn-primary mr-2"
+								data-bs-toggle="modal" data-bs-target="#uploadModal">上傳圖片</button>
+						</div>
+					</div>
+
+					<div class="card mb-4">
+						<div class="card-body">
+							<table id="movieTable" class="table table-bordered" width="100%">
+								<thead>
+									<tr>
+										<th>編號</th>
+										<th>電影名稱</th>
+										<th>上映日期</th>
+										<th>預計下檔日期</th>
+										<th>片長 (分鐘)</th>
+										<th>狀態</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<th:block th:replace="fragments/empFooter :: footer"></th:block>
+		</div>
+	</div>
+	<a class="scroll-to-top rounded" href="#page-top"><i
+		class="fas fa-angle-up"></i></a>
+
+		<!-- 編輯電影 Modal -->
+		<div class="modal fade" id="editModal" tabindex="-1"
+			aria-labelledby="editModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editModalLabel">編輯電影資料</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="關閉"></button>
+					</div>
+					<div class="modal-body">
+						<form id="movieForm">
+							<input type="hidden" id="movieId" />
+							<div class="mb-3">
+								<label for="name" class="form-label">電影名稱</label> <input
+									type="text" class="form-control" id="name" />
+							</div>
+							<div class="mb-3">
+								<label for="released" class="form-label">上映日期</label> <input
+									type="date" class="form-control" id="released" />
+							</div>
+							<div class="mb-3">
+								<label for="retired" class="form-label">預計下檔日期</label> <input
+									type="date" class="form-control" id="retired" />
+							</div>
+							<div class="mb-3">
+								<label for="runtime" class="form-label">片長 (分鐘)</label> <input
+									type="number" class="form-control" id="runtime" />
+							</div>
+							<div class="mb-3">
+								<label for="state" class="form-label">狀態</label> <select
+									class="form-control" id="state">
+									<option value="上映">上映</option>
+									<option value="下架">下架</option>
+								</select>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-primary" id="submitBtn">
+							儲存變更</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 編輯詳細訊息 Modal -->
+		<div class="modal fade" id="editDetailModal" tabindex="-1"
+			aria-labelledby="editDetailModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editDetailModalLabel">編輯電影詳細資訊</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="關閉"></button>
+					</div>
+					<div class="modal-body">
+						<form id="editDetailForm">
+							<input type="hidden" id="movieDetailId" />
+							<div class="mb-3">
+								<label for="rating" class="form-label">分級</label> <input
+									type="text" class="form-control" id="rating" />
+							</div>
+							<div class="mb-3">
+								<label for="genre" class="form-label">類型</label> <input
+									type="text" class="form-control" id="genre" />
+							</div>
+							<div class="mb-3">
+								<label for="director" class="form-label">導演</label> <input
+									type="text" class="form-control" id="director" />
+							</div>
+							<div class="mb-3">
+								<label for="actor" class="form-label">演員</label> <input
+									type="text" class="form-control" id="actor" />
+							</div>
+							<div class="mb-3">
+								<label for="description" class="form-label">簡介</label>
+								<textarea class="form-control" id="description" rows="3"></textarea>
+							</div>
+							<div class="mb-3">
+								<label for="image" class="form-label">圖片名稱</label> <input
+									type="text" class="form-control" id="image" />
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-primary" id="submitDetailBtn">
+							儲存變更</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 詳細資訊 Modal -->
+		<div class="modal fade" id="detailModal" tabindex="-1"
+			aria-labelledby="detailModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="detailModalLabel">電影詳細資訊</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="關閉"></button>
+					</div>
+					<div class="modal-body">
+						<p>
+							<strong>分級：</strong> <span id="detailRating"></span>
+						</p>
+						<p>
+							<strong>類型：</strong> <span id="detailGenre"></span>
+						</p>
+						<p>
+							<strong>導演：</strong> <span id="detailDirector"></span>
+						</p>
+						<p>
+							<strong>演員：</strong> <span id="detailActor"></span>
+						</p>
+						<p>
+							<strong>簡介：</strong>
+						</p>
+						<p id="detailDescription"></p>
+						<p>
+							<strong>圖片：</strong>
+						</p>
+						<img id="detailImage" src="" alt="電影圖片" class="img-fluid mb-3"
+							style="max-height: 300px" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 新增電影 Modal -->
+		<div class="modal fade" id="addMovieModal" tabindex="-1"
+			aria-labelledby="addMovieModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addMovieModalLabel">新增電影資料</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="關閉"></button>
+					</div>
+					<div class="modal-body">
+						<form id="addMovieForm">
+							<div class="mb-3">
+								<label for="addMovieName" class="form-label">電影名稱</label> <input
+									type="text" class="form-control" id="addMovieName" required />
+							</div>
+							<div class="mb-3">
+								<label for="addMovieReleased" class="form-label">上映日期</label> <input
+									type="date" class="form-control" id="addMovieReleased" required />
+							</div>
+							<div class="mb-3">
+								<label for="addMovieRetired" class="form-label">預計下檔日期</label> <input
+									type="date" class="form-control" id="addMovieRetired" required />
+							</div>
+							<div class="mb-3">
+								<label for="addMovieRuntime" class="form-label">片長 (分鐘)</label>
+								<input type="number" class="form-control" id="addMovieRuntime"
+									required />
+							</div>
+							<div class="mb-3">
+								<label for="addMovieState" class="form-label">狀態</label> <select
+									class="form-control" id="addMovieState" required>
+									<option value="上映">上映</option>
+									<option value="下架">下架</option>
+								</select>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-primary"
+							id="submitAddMovieBtn">儲存變更</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 上傳圖片 Modal -->
+		<div class="modal fade" id="uploadModal" tabindex="-1"
+			aria-labelledby="uploadModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="uploadModalLabel">上傳圖片</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="關閉"></button>
+					</div>
+					<div class="modal-body">
+						<form id="uploadImageForm" enctype="multipart/form-data">
+							<div class="mb-3">
+								<label for="imageName" class="form-label">圖片名稱</label> <input
+									type="text" class="form-control" id="imageName"
+									placeholder="請輸入圖片名稱" required />
+							</div>
+							<div class="mb-3">
+								<label for="imageFile" class="form-label">選擇圖片</label> <input
+									type="file" class="form-control" id="imageFile"
+									accept="image/*" required />
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-primary" id="uploadImageBtn">
+							上傳圖片</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="/js/sb-admin-2.min.js"></script>
+	<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+    const editDetailModal = new bootstrap.Modal(document.getElementById("editDetailModal"));
+    const detailModal = new bootstrap.Modal(document.getElementById("detailModal"));
+    const addMovieModal = new bootstrap.Modal(document.getElementById("addMovieModal"));
+    const uploadModal = new bootstrap.Modal(document.getElementById("uploadModal"));
+
+    const table = $("#movieTable").DataTable({
+      info: true,
+      lengthChange: true,
+      ajax: {
+        url: "/movies",
+        type: "GET",
+        dataSrc: json => json.map(movie => ({
+          id: movie.id,
+          name: movie.name,
+          released: movie.released,
+          retired: movie.retired,
+          runtime: movie.runtime,
+          state: movie.state,
+          actions: `
+            <button class="btn btn-warning btn-sm editBtn text-white" data-id="${movie.id}">編輯</button>
+            <button class="btn btn-info btn-sm detailBtn text-white" data-id="${movie.id}">詳細訊息</button>
+            <button class="btn btn-primary btn-sm editDetailBtn text-white" data-id="${movie.id}">編輯詳細訊息</button>
+            <button class="btn btn-danger btn-sm deleteBtn text-white" data-id="${movie.id}">刪除</button>
+          `
+        }))
+      },
+      columns: [
+        { data: "id" },
+        { data: "name" },
+        { data: "released" },
+        { data: "retired" },
+        { data: "runtime" },
+        { data: "state" },
+        { data: "actions", orderable: false }
+      ],
+      language: {
+        url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json'
+      },
+      columnDefs: [
+        {
+          targets: [2, 3],
+          render: data => new Date(data).toLocaleDateString("zh-TW")
+        }
+      ]
+    });
+
+    $("#movieTable").on("click", ".editBtn", function () {
+      const movieId = $(this).data("id");
+      $.get(`/movies/${movieId}`, movie => {
+        $("#movieId").val(movie.id);
+        $("#name").val(movie.name);
+        $("#released").val(movie.released);
+        $("#retired").val(movie.retired);
+        $("#runtime").val(movie.runtime);
+        $("#state").val(movie.state);
+        editModal.show();
+      });
+    });
+
+    $("#submitBtn").click(() => {
+      const movieId = $("#movieId").val();
+      const movieData = {
+        name: $("#name").val(),
+        released: $("#released").val(),
+        retired: $("#retired").val(),
+        runtime: $("#runtime").val(),
+        state: $("#state").val()
+      };
+      $.ajax({
+        url: `/movies/${movieId}`,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(movieData),
+        success: () => { table.ajax.reload(); editModal.hide(); },
+        error: () => alert("更新失敗")
+      });
+    });
+
+    $("#movieTable").on("click", ".deleteBtn", function () {
+      const movieId = $(this).data("id");
+      Swal.fire({
+        title: '確定刪除？', icon: 'warning', showCancelButton: true
+      }).then(result => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: `/movies/${movieId}`,
+            type: "DELETE",
+            success: () => { table.ajax.reload(); Swal.fire('刪除成功', '', 'success'); },
+            error: () => Swal.fire('刪除失敗', '', 'error')
+          });
+        }
+      });
+    });
+
+    $("#movieTable").on("click", ".editDetailBtn", function () {
+      const movieId = $(this).data("id");
+      $.get(`/movies/${movieId}/details`, detail => {
+        $("#movieDetailId").val(detail.id);
+        $("#rating").val(detail.rating);
+        $("#genre").val(detail.genre);
+        $("#director").val(detail.director);
+        $("#actor").val(detail.actor);
+        $("#description").val(detail.description);
+        $("#image").val(detail.image);
+        editDetailModal.show();
+      });
+    });
+
+    $("#submitDetailBtn").click(() => {
+      const movieId = $("#movieDetailId").val();
+      const data = {
+        rating: $("#rating").val(),
+        genre: $("#genre").val(),
+        director: $("#director").val(),
+        actor: $("#actor").val(),
+        description: $("#description").val(),
+        image: $("#image").val()
+      };
+      $.ajax({
+        url: `/movies/${movieId}/detail`,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: () => { table.ajax.reload(); editDetailModal.hide(); },
+        error: () => alert("更新詳細失敗")
+      });
+    });
+
+    $("#addMovieBtn").click(() => {
+      $("#addMovieForm")[0].reset();
+      addMovieModal.show();
+    });
+
+    $("#submitAddMovieBtn").click(() => {
+      const data = {
+        name: $("#addMovieName").val(),
+        released: $("#addMovieReleased").val(),
+        retired: $("#addMovieRetired").val(),
+        runtime: $("#addMovieRuntime").val(),
+        state: $("#addMovieState").val()
+      };
+      $.ajax({
+        url: "/movies",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: () => { table.ajax.reload(); addMovieModal.hide(); alert("新增成功"); },
+        error: () => alert("新增失敗")
+      });
+    });
+
+    $("#uploadImageBtn").click(() => {
+      const name = $("#imageName").val();
+      const file = $("#imageFile")[0].files[0];
+      if (!name || !file) return alert("請填寫名稱與圖片");
+
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("imageName", name);
+
+      $.ajax({
+        url: "/movies/uploadImage",
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: () => { uploadModal.hide(); alert("上傳成功") },
+        error: () => alert("上傳失敗")
+      });
+    });
+
+    $("#movieTable").on("click", ".detailBtn", function () {
+      const movieId = $(this).data("id");
+      $.get(`/movies/${movieId}/details`, detail => {
+        $("#detailRating").text(detail.rating);
+        $("#detailGenre").text(detail.genre);
+        $("#detailDirector").text(detail.director);
+        $("#detailActor").text(detail.actor);
+        $("#detailDescription").text(detail.description);
+        $("#detailImage").attr("src", "/movie/images/" + detail.image);
+        detailModal.show();
+      });
+    });
+  });
+</script>
+</body>
+</html>

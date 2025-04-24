@@ -1,0 +1,60 @@
+<div layout:decorate="~{layout/empLayout}" xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+    <th:block  layout:fragment="head">
+    <link href="/css/insertMember.css" rel="stylesheet" />
+    </th:block >
+    
+    <div layout:fragment="main-content" class="container-fluid emp-dashboard-container">
+    <div class="container" style="width:100%;margin:auto">
+    <h1>修改會員資料</h1>
+	<form class="member-update-form" th:action="@{/member/updateMember}" th:object=${member} method="post">
+	<div class="form-group" style="display:none;">
+		<input type="text" name="memberId" th:field="*{memberId}">
+	</div>
+	
+	<div class="form-group">
+		<label class="t1">會員姓名 (Name):</label>
+		<input type="text" name="name" placeholder="中英文皆可(全名)" th:field="*{name}" required>
+	</div>
+	<div class="form-group">
+		<label class="t1">身分證號碼 (NationalId):</label>
+		<input type="text" name="nationalId" maxlength="10" pattern="[a-zA-Z]{1}[1-2,8-9]{1}\d{8}" th:field="*{nationalId}" placeholder="須按照格式(A1XXXXXXXX)" required>
+		<label class="t1">會員生日 (DateOfBirth):</label>
+		<input type="date" name="dateOfBirth" value="2001-01-01" required>
+	</div>
+	<div class="form-group">
+		<label class="t1">會員性別 (Gender):</label>
+		<span class=gender-label>男生</span>
+		<input type="radio" name="gender" th:field="*{gender}" value="male" id="male" required />
+		<span class=gender-label>女生</span>
+		<input type="radio" name="gender" th:field="*{gender}" value="female" id="female" required />
+		<span class=gender-label>不願透漏</span>
+		<input type="radio" name="gender" th:field="*{gender}" value="other" id="other" required />
+	</div>
+	<div class="form-group">
+		<label class="t1">帳號 (Email):</label>
+		<input type="text" name="email" th:field="*{email}" placeholder="請輸入註冊信箱" readonly >
+	</div>
+	<div class="form-group">
+		<label class="t1">手機號碼 (PhoneNumber):</label>
+		<input type="text" name="phoneNumber" th:field="*{phoneNumber}"  maxlength="10" pattern="[0]{1}[9]{1}\d{8}" placeholder="09XXXXXXXX" readonly>
+	</div>
+	<div class="form-group">
+		<label class="t1">修改新密碼 (Password):</label>
+		<input type="text" name="password" th:field="*{password}" placeholder="修改密碼(不修改則不用填)" >
+		<label id="confirmPasswordLabel" class="t1" style="display:none;" >確認新密碼 (Confirm Password):</label>
+		<input id="confirmPasswordInput" type="text" name="password2" placeholder="確認密碼(不修改則不用填)" style="display:none;"/>
+	</div>
+	<div class="button-group">
+		<button type="submit">確定修改</button>
+		<button type="reset"><a th:href="@{/member/showAllMember}">取消</a></button>
+	</div>
+	</form>
+    </div>
+    <div id="message-holder" th:attr="data-message=${message}" style="display:none;"></div>
+    </div>
+    
+     <th:block  layout:fragment="scripts">
+	 <script src="/js/updateMember.js"></script>
+    </th:block >

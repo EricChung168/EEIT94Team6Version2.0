@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>會員專區</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/memberDetail.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+</head>
+
+<body>
+
+  <!-- Bootstrap SVG icons symbols -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="chevron-down" viewBox="0 0 16 16">
+      <path fill="currentColor" fill-rule="evenodd"
+        d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
+    </symbol>
+  </svg>
+
+  <!-- 匯入 navbar -->
+  <div th:replace="fragments/navbar :: navbar"></div>
+
+  <div class="d-flex">
+    <!-- 左側側邊欄 -->
+    <div th:replace="fragments/memberDetailsideBar :: memberDetailsideBar"></div>
+
+    <!-- 右側內容區 -->
+    <div class="flex-grow-1 p-4 memberDetail">
+      <h3>個人檔案</h3>
+      <form>
+        <div class="mb-3">
+          <label class="form-label">會員姓名</label>
+          <input type="text" class="form-control" name="name" th:value="${session.memberDetail.name}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">身分證號碼</label>
+          <input type="text" class="form-control" name="nationalId" th:value="${session.memberDetail.nationalId}"
+            readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">生日</label>
+          <input type="date" class="form-control" name="dateOfBirth" th:value="${session.memberDetail.dateOfBirth}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">性別</label><br>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" value="male"
+              th:checked="${session.memberDetail.gender == 'male'}">
+            <label class="form-check-label">男生</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" value="female"
+              th:checked="${session.memberDetail.gender == 'female'}">
+            <label class="form-check-label">女生</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" value="other"
+              th:checked="${session.memberDetail.gender == 'other'}">
+            <label class="form-check-label">不願透露</label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" name="email" th:value="${session.memberDetail.email}" readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">手機號碼</label>
+          <input type="text" class="form-control" name="phoneNumber" th:value="${session.memberDetail.phoneNumber}"
+            readonly>
+        </div>
+        <button type="submit" class="btn btn-primary">儲存</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 匯入 footer -->
+  <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+
+</body>
+
+</html>

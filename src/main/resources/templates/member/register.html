@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>會員註冊</title>
+
+<!-- SB Admin 2 樣式 -->
+
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,700"
+	rel="stylesheet">
+<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+<!-- 自訂背景圖 -->
+<style>
+.bg-register-image {
+	background: url('/imgs/MemberRegister.jpg');
+	background-position: center;
+	background-size: cover;
+}
+</style>
+</head>
+
+<body class="bg-gradient-primary">
+	<div class="container">
+
+		<div class="card o-hidden border-0 shadow-lg my-5">
+			<div class="card-body p-0">
+				<div class="row">
+					<!-- 左圖區塊 -->
+					<div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+
+					<!-- 右側表單 -->
+					<div class="col-lg-7">
+						<div class="p-5">
+							<div class="text-center">
+								<h1 class="h4 text-gray-900 mb-4">加入會員 JOIN MEMBER</h1>
+							</div>
+
+							<form class="register-form">
+								<div class="form-group">
+									<label>會員姓名 (Name):</label> <input type="text" name="name"
+										class="form-control form-control-user" placeholder="中英文皆可(全名)"
+										required>
+								</div>
+
+								<div class="form-group">
+									<label>身分證號碼 (NationalId):</label> <input type="text"
+										name="nationalId" class="form-control form-control-user"
+										maxlength="10" pattern="[a-zA-Z]{1}[1-2,8-9]{1}\d{8}"
+										placeholder="須按照格式(A1XXXXXXXX)" required>
+								</div>
+
+								<div class="form-group">
+									<label>會員生日 (DateOfBirth):</label> <input type="date"
+										name="dateOfBirth" value="2001-01-01"
+										class="form-control form-control-user" required>
+								</div>
+
+								<div class="form-group">
+									<label>會員性別 (Gender):</label><br>
+									<div class="form-check form-check-inline">
+										<input type="radio" name="gender" value="male"
+											class="form-check-input" id="male" required> <label
+											class="form-check-label" for="male">男生</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input type="radio" name="gender" value="female"
+											class="form-check-input" id="female" required> <label
+											class="form-check-label" for="female">女生</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input type="radio" name="gender" value="other"
+											class="form-check-input" id="other" required> <label
+											class="form-check-label" for="other">不願透露</label>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label>帳號 (Email):</label> <input type="email" name="email"
+										class="form-control form-control-user" placeholder="請輸入註冊信箱"
+										required>
+								</div>
+
+								<div class="form-group">
+									<label>手機號碼 (PhoneNumber):</label> <input type="text"
+										name="phoneNumber" class="form-control form-control-user"
+										maxlength="10" pattern="[0]{1}[9]{1}\d{8}"
+										placeholder="09XXXXXXXX" required>
+								</div>
+
+								<div class="form-group row">
+									<div class="col-sm-6 mb-3 mb-sm-0">
+										<label>密碼 (Password):</label> <input type="password"
+											name="password" class="form-control form-control-user"
+											placeholder="請輸入密碼" required>
+									</div>
+									<div class="col-sm-6">
+										<label>確認密碼:</label> <input type="password" name="password2"
+											class="form-control form-control-user" placeholder="再次確認密碼"
+											required>
+									</div>
+								</div>
+
+								<button type="submit" class="btn btn-primary btn-user btn-block">確定新增</button>
+								<button type="reset"
+									class="btn btn-secondary btn-user btn-block">取消</button>
+							</form>
+
+							<hr>
+							<div class="text-center">
+								<a class="small" a href="#" onclick="redirectWithLoginModal()">已經有帳號？前往首頁並登入</a>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- JS 套件 -->
+	<script src="/js/jquery.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<script>
+    $(document).ready(function () {
+      $('.register-form').submit(function (e) {
+        e.preventDefault();
+
+        let password = $('input[name="password"]').val();
+        let password2 = $('input[name="password2"]').val();
+
+        if (password !== password2) {
+          Swal.fire({
+            icon: 'warning',
+            title: '密碼不一致',
+            text: '請確認兩次密碼輸入相同'
+          });
+          return;
+        }
+
+        $.ajax({
+		  url: '/member/register',
+		  type: 'POST',
+		  data: $('.register-form').serialize(),
+		  beforeSend: function () {
+		    Swal.fire({
+		      title: '註冊中...',
+		      text: '請稍候',
+		      allowOutsideClick: false,
+		      allowEscapeKey: false,
+		      didOpen: () => {
+		        Swal.showLoading();
+		      }
+		    });
+		  },
+		  success: function (response) {
+		    if (response.status === 'success') {
+		      Swal.fire({
+		        icon: 'success',
+		        title: '註冊成功',
+		        html: `歡迎 <b>${response.name}</b> 加入我們！`,
+		        confirmButtonText: '前往登入',
+		        timer: 3000,
+		        timerProgressBar: true
+		      }).then(() => {
+		        localStorage.setItem("autoShowLogin", "true");
+		        window.location.href = "/";
+		      });
+		    } else {
+		      Swal.fire({
+		        icon: 'error',
+		        title: '註冊失敗',
+		        text: response.message || '請稍後再試'
+		      });
+		    }
+		  },
+		  error: function () {
+		    Swal.fire({
+		      icon: 'error',
+		      text: '請稍後再試或聯絡客服'
+		    });
+		  }
+		});
+	  });
+	});
+</script>
+<script>
+  function redirectWithLoginModal() {
+    localStorage.setItem("autoShowLogin", "true");
+    window.location.href = "/";
+  }
+</script>
+</body>
+</html>

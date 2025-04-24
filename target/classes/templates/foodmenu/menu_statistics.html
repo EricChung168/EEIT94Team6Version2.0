@@ -1,0 +1,123 @@
+<style>
+  .chart-container {
+    max-width: 800px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+  }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .chart-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .chart-header button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  canvas {
+    max-height: 350px;
+  }
+</style>
+
+<div class="chart-container">
+  <div class="chart-header">
+    <h2>🔥 熱銷前五名</h2>
+    <button id="toggleTopChart">切換圖表</button>
+  </div>
+  <canvas id="top5Chart"></canvas>
+</div>
+
+<div class="chart-container">
+  <div class="chart-header">
+    <h2>🧊 最冷門商品</h2>
+    <button id="toggleBottomChart">切換圖表</button>
+  </div>
+  <canvas id="bottom5Chart"></canvas>
+</div>
+
+<!-- ✅ Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script th:inline="javascript">
+document.addEventListener("DOMContentLoaded", function () {
+    const top5 = /*[[${top5}]]*/ [];
+    const bottom5 = /*[[${bottom5}]]*/ [];
+
+    const topLabels = top5.map(s => s[0]);
+    const topData = top5.map(s => s[1]);
+    const bottomLabels = bottom5.map(s => s[0]);
+    const bottomData = bottom5.map(s => s[1]);
+
+    const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+
+    let topType = 'bar', topChart;
+    let bottomType = 'bar', bottomChart;
+
+    function renderChart(canvasId, labels, data, title, type, instanceRef) {
+        const ctx = document.getElementById(canvasId);
+        if (instanceRef.current) instanceRef.current.destroy();
+
+        instanceRef.current = new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '銷售數量',
+                    data: data,
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                indexAxis: type === 'bar' ? 'y' : undefined,
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: title
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right'
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    const topChartRef = { current: null };
+    const bottomChartRef = { current: null };
+
+    renderChart('top5Chart', topLabels, topData, '🔥 熱銷前五名商品', topType, topChartRef);
+    renderChart('bottom5Chart', bottomLabels, bottomData, '🧊 最冷門商品', bottomType, bottomChartRef);
+
+    document.getElementById('toggleTopChart').addEventListener('click', () => {
+        topType = topType === 'bar' ? 'pie' : 'bar';
+        renderChart('top5Chart', topLabels, topData, '🔥 熱銷前五名商品', topType, topChartRef);
+    });
+
+    document.getElementById('toggleBottomChart').addEventListener('click', () => {
+        bottomType = bottomType === 'bar' ? 'pie' : 'bar';
+        renderChart('bottom5Chart', bottomLabels, bottomData, '🧊 最冷門商品', bottomType, bottomChartRef);
+    });
+});
+</script>
+
+
