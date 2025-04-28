@@ -1,10 +1,14 @@
 package com.example.demo.member.controller;
 import com.example.demo.member.model.Member;
+import com.example.demo.member.model.MemberDTOByEmp;
+import com.example.demo.member.model.MemberRepository;
 import com.example.demo.member.model.MemberService;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +30,7 @@ public class MemberApiController {
 	@Autowired
     private MemberService memberService;
 	
+	private MemberRepository memberRepository;
 
 	
 	@PostMapping("/register")
@@ -95,6 +100,21 @@ public class MemberApiController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("寄信失敗：" + e.getMessage());
 	    }
 	}
+	
+	
+	@GetMapping("/simpleList")
+    public List<MemberDTOByEmp> getSimpleMemberList() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return memberRepository.findAll().stream()
+            .map(member -> new MemberDTOByEmp(
+                    member.getMemberId(),
+                    member.getName(),
+                    member.getGender(),
+                    member.getEmail(),
+                    member.getPhoneNumber(),
+                    member.getCreateTime().format(formatter)
+            )).collect(Collectors.toList());
+    }
 
 
 }
