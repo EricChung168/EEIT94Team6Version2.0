@@ -5,72 +5,142 @@
 <title>Insert title here</title>
 </head>
 <body>
+
 	<!-- fragments/memberModal.html -->
-	<div th:fragment="registerModal">
-		<div class="modal fade" id="registerModal" tabindex="-1"
+	<!-- 查看會員詳細資訊 Modal -->
+	<div th:fragment="viewModal">
+		<div class="modal fade" id="viewModal" tabindex="-1"
 			aria-hidden="true">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
-					<form class="register-form">
-						<div class="modal-header">
-							<h5 class="modal-title">加入會員 JOIN MEMBER</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"
-								aria-label="關閉"></button>
-						</div>
-						<div class="modal-body">
-							<div class="form-group mb-3">
-								<label>會員姓名 (Name):</label> <input type="text" name="name"
-									class="form-control" required>
-							</div>
-							<div class="form-group mb-3">
-								<label>身分證號碼 (NationalId):</label> <input type="text"
-									name="nationalId" class="form-control" maxlength="10"
-									pattern="[a-zA-Z]{1}[1-2,8-9]{1}\d{8}" required>
-							</div>
-							<div class="form-group mb-3">
-								<label>會員生日 (DateOfBirth):</label> <input type="date"
-									name="dateOfBirth" class="form-control" required>
-							</div>
-							<div class="form-group mb-3">
-								<label>會員性別 (Gender):</label><br>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="gender"
-										value="male" required> <label class="form-check-label">男生</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="gender"
-										value="female"> <label class="form-check-label">女生</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="gender"
-										value="other"> <label class="form-check-label">不願透露</label>
-								</div>
-							</div>
-							<div class="form-group mb-3">
-								<label>帳號 (Email):</label> <input type="email" name="email"
-									class="form-control" required>
-							</div>
-							<div class="form-group mb-3">
-								<label>手機號碼 (PhoneNumber):</label> <input type="text"
-									name="phoneNumber" class="form-control" maxlength="10"
-									pattern="[0]{1}[9]{1}\d{8}" required>
-							</div>
-							<div class="form-group mb-3">
-								<label>密碼 (Password):</label> <input type="password"
-									name="password" class="form-control" required>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="submit" class="btn btn-primary">確定新增</button>
-							<button type="reset" class="btn btn-secondary"
-								data-bs-dismiss="modal">取消</button>
-						</div>
-					</form>
+					<div class="modal-header">
+						<h5 class="modal-title">會員詳細資訊</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="關閉"></button>
+					</div>
+					<div class="modal-body">
+						<dl class="row">
+							<dt class="col-sm-3">會員ID</dt>
+							<dd class="col-sm-9" id="view-memberId"></dd>
+
+							<dt class="col-sm-3">姓名</dt>
+							<dd class="col-sm-9" id="view-name"></dd>
+
+							<dt class="col-sm-3">性別</dt>
+							<dd class="col-sm-9" id="view-gender"></dd>
+
+							<dt class="col-sm-3">出生日期</dt>
+							<dd class="col-sm-9" id="view-dateOfBirth"></dd>
+
+							<dt class="col-sm-3">身分證字號</dt>
+							<dd class="col-sm-9" id="view-nationalId"></dd>
+
+							<dt class="col-sm-3">電子信箱</dt>
+							<dd class="col-sm-9" id="view-email"></dd>
+
+							<dt class="col-sm-3">手機號碼</dt>
+							<dd class="col-sm-9" id="view-phoneNumber"></dd>
+
+							<dt class="col-sm-3">新信箱 (如有)</dt>
+							<dd class="col-sm-9" id="view-newEmail"></dd>
+
+							<dt class="col-sm-3">帳號驗證狀態</dt>
+							<dd class="col-sm-9" id="view-verification"></dd>
+
+							<dt class="col-sm-3">註冊時間</dt>
+							<dd class="col-sm-9" id="view-createTime"></dd>
+
+							<dt class="col-sm-3">會員身份</dt>
+							<dd class="col-sm-9" id="view-memberType"></dd>
+						</dl>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">關閉</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<!-- 新增會員 Modal -->
+	<div th:fragment="registerModal">
+		<div class="modal fade" id="registerModal" tabindex="-1"
+			aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<form id="register-form" class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">新增會員</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="關閉"></button>
+					</div>
+					<div class="modal-body">
+
+						<div class="mb-3">
+							<label class="form-label">姓名</label> <input type="text"
+								name="name" class="form-control" required>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">性別</label><br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="gender"
+									value="male" required> <label class="form-check-label">男</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="gender"
+									value="female"> <label class="form-check-label">女</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="gender"
+									value="other"> <label class="form-check-label">不願透露</label>
+							</div>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">電子信箱</label> <input type="email"
+								name="email" class="form-control" required>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">手機號碼</label> <input type="text"
+								name="phoneNumber" class="form-control" maxlength="10"
+								pattern="[0]{1}[9]{1}[0-9]{8}" required>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">出生日期</label> <input type="date"
+								name="dateOfBirth" class="form-control" required>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">身分證字號</label> <input type="text"
+								name="nationalId" class="form-control" maxlength="10"
+								pattern="[A-Z]{1}[1-2]{1}[0-9]{8}" required>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">會員身份</label> <select
+								name="memberTypeId" id="memberTypeId" class="form-select"
+								required>
+								<option value="">請選擇會員身份</option>
+								<!-- 會員身份選單會由 JS 動態填入 -->
+							</select>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">新增會員</button>
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">取消</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 編輯會員 Modal -->
 	<div th:fragment="editModal">
 		<div class="modal fade" id="editModal" tabindex="-1"
 			aria-hidden="true">
@@ -83,38 +153,47 @@
 					</div>
 					<div class="modal-body">
 						<input type="hidden" name="memberId">
+
 						<div class="mb-3">
-							<label>姓名:</label> <input type="text" name="name"
-								class="form-control" required>
+							<label class="form-label">姓名:</label> <input type="text"
+								name="name" class="form-control" required>
 						</div>
+
 						<div class="mb-3">
-							<label>Email:</label> <input type="email" name="email"
-								class="form-control" required>
+							<label class="form-label">Email:</label> <input type="email"
+								name="email" class="form-control" required>
 						</div>
+
 						<div class="mb-3">
-							<label>手機:</label> <input type="text" name="phoneNumber"
-								class="form-control" maxlength="10" pattern="[0]{1}[9]{1}\d{8}"
-								required>
+							<label class="form-label">手機:</label> <input type="text"
+								name="phoneNumber" class="form-control" maxlength="10"
+								pattern="[0]{1}[9]{1}[0-9]{8}" required>
 						</div>
+
 						<div class="mb-3">
-							<label>生日:</label> <input type="date" name="dateOfBirth"
-								class="form-control" required>
+							<label class="form-label">生日:</label> <input type="date"
+								name="dateOfBirth" class="form-control" required>
 						</div>
+
 						<div class="mb-3">
-							<label>性別:</label><br>
+							<label class="form-label">性別:</label><br>
 							<div class="form-check form-check-inline">
 								<input class="form-check-input" type="radio" name="gender"
-									value="male"> <label class="form-check-label">男</label>
+									value="male" id="genderMale"> <label
+									class="form-check-label" for="genderMale">男</label>
 							</div>
 							<div class="form-check form-check-inline">
 								<input class="form-check-input" type="radio" name="gender"
-									value="female"> <label class="form-check-label">女</label>
+									value="female" id="genderFemale"> <label
+									class="form-check-label" for="genderFemale">女</label>
 							</div>
 							<div class="form-check form-check-inline">
 								<input class="form-check-input" type="radio" name="gender"
-									value="other"> <label class="form-check-label">不願透露</label>
+									value="other" id="genderOther"> <label
+									class="form-check-label" for="genderOther">不願透露</label>
 							</div>
 						</div>
+
 					</div>
 					<div class="modal-footer">
 						<button type="submit" class="btn btn-primary">儲存變更</button>
@@ -125,6 +204,7 @@
 			</div>
 		</div>
 	</div>
+
 
 </body>
 </html>

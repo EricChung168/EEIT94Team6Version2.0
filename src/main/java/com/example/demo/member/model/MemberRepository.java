@@ -12,12 +12,17 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	List<Member> findByPhoneNumberContaining(String phoneNumber);
 	//Member 註冊時檢查 信箱和密碼是否已註冊
 	List<Member> findByEmailOrPhoneNumber(String email, String phoneNumber);
-	Member findByVerificationCode(String code);
-	
-	List<Member> findByNameContaining(String name);
+	Member findByEmailAndOriginEmailCode(String email, String originEmailCode);
 	
 	
-	List<Member> findByNameContainingIgnoreCase(String name);
-	List<Member> findByEmailContainingIgnoreCase(String email);
+	
+	// 查找註冊時的驗證信用code
+    Member findByOriginEmailCode(String originEmailCode);
 
+    // 查找忘記密碼用的重設密碼code
+    Member findByResetPasswordCode(String resetPasswordCode);
+
+    // 查找信箱變更時的新信箱驗證code
+    Member findByNewEmailCode(String newEmailCode);
+	Member findByEmailAndResetPasswordCode(String email, String code);
 }

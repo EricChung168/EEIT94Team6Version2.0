@@ -6,9 +6,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -49,13 +52,19 @@ public class Member {
 	private String password;
 	
 	@Column(name = "newEmail")
-	private String newEmail;
+	private String newEmail= null;
 	
 	@Column(name = "verification")
 	private boolean verification = false;
 	
-	@Column(name = "verificationCode")
-	private String verificationCode = null;
+	@Column(name = "originEmailCode")
+    private String originEmailCode = null;
+
+    @Column(name = "newEmailCode")
+    private String newEmailCode = null;
+
+    @Column(name = "resetPasswordCode")
+    private String resetPasswordCode = null;
 	
 	@CreationTimestamp
     @Column(name = "createTime", nullable = false, updatable = false)
@@ -64,7 +73,10 @@ public class Member {
 	@Column(name = "dateOfBirth", nullable = false)
     private String dateOfBirth;
 	
-	
+	// 會員身份
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberTypeId",nullable = false)
+    private MemberType memberType;
 	
 	
 }

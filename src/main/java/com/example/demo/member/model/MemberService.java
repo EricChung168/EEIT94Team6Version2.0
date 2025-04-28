@@ -4,298 +4,349 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
+
+import com.example.demo.member.model.Member;
+import com.example.demo.member.model.MemberRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 @Service
 public class MemberService {
-	
+
 	@Autowired
 	private MemberRepository memberRepository;
-	
+
+	@Autowired
+	private MemberTypeRepository memberTypeRepository;
+
+	@Autowired
+	private JavaMailSender mailSender;
+
 	@Autowired
 	private PasswordEncoder pwdEncoder;
-	
+
 	@Autowired
-    private JavaMailSender mailSender;
-	
-	@Transactional
-	public Member updateMember(Long id,Member updatedMember) {
+	private MemberMailService mailService;
+
+	public Member findById(Long id) {
+		Member member = null;
 		Optional<Member> optional = memberRepository.findById(id);
-		if(optional.isPresent()) {
-			Member originalMember = optional.get();					
-			String newName  = updatedMember.getName();
-			String newDateOfBirth  = updatedMember.getDateOfBirth();
-			String newGender  = updatedMember.getGender();
-		
-		//更新資料
-		originalMember.setName(newName);
-		originalMember.setGender(newGender);
-		originalMember.setDateOfBirth(newDateOfBirth);
-		//更新資料 (密碼)
-		if(updatedMember.getPassword() != null && !updatedMember.getPassword().isBlank()) {
-			String newPassword  = updatedMember.getPassword();
-			String hashedPwd = pwdEncoder.encode(newPassword);
-			originalMember.setPassword(hashedPwd);
+		if (optional.isPresent()) {
+			member = optional.get();
 		}
-			return originalMember;
-		}else {
+		return member;
+	}
+
+	// 註冊會員
+	@Transactional
+	public Member register(Member member) throws MessagingException {
+		// 密碼加密
+		String hashedPwd = pwdEncoder.encode(member.getPassword());
+		member.setPassword(hashedPwd);
+
+		// 產生5碼驗證碼
+		String verifyCode = generateVerifyCode();
+		member.setOriginEmailCode(verifyCode);
+		member.setVerification(false);
+
+		// 註冊時給「一般會員」的MemberType
+		if (member.getMemberType() == null) {
+			MemberType defaultType = memberTypeRepository.findByTypeName("一般會員");
+			member.setMemberType(defaultType);
+		}
+
+		Member savedMember = memberRepository.save(member);
+
+		// 寄送驗證信
+		sendVerificationEmail(member.getEmail(), verifyCode);
+
+		return savedMember;
+	}
+
+	// 發送驗證信
+	public void sendVerificationEmail(String toEmail, String verifyCode) throws MessagingException {
+		String subject = "會員註冊驗證信 - 光影之門";
+		String verifyLink = "http://localhost:8080/member/verify?code=" + verifyCode;
+		String content = getVerificationEmailContent(verifyLink);
+
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+		helper.setTo(toEmail);
+		helper.setSubject(subject);
+		helper.setText(content, true);
+
+		mailSender.send(message);
+	}
+
+	// 產生五碼驗證碼
+	public String generateVerifyCode() {
+		return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 5).toUpperCase();
+	}
+
+	// 美化版驗證信內容
+	private String getVerificationEmailContent(String verifyLink) {
+		return """
+				<!DOCTYPE html>
+				<html>
+				<head>
+				  <meta charset='UTF-8'>
+				  <title>帳號驗證信</title>
+				</head>
+				<body style='font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 20px;'>
+				  <div style='background-color: #ffffff; padding: 20px; border-radius: 5px;'>
+				    <h2>親愛的會員您好：</h2>
+				    <p>感謝您的註冊，請點擊下方按鈕完成帳號啟用：</p>
+				    <div style='text-align: center; margin: 30px;'>
+				      <a href='%s' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;'>立即驗證</a>
+				    </div>
+				    <p style='color: #999;'>如果您未申請註冊，請忽略此信件。</p>
+				  </div>
+				</body>
+				</html>
+				"""
+				.formatted(verifyLink);
+	}
+
+	// 信箱變更驗證
+	private String getChangeEmailContent(String verifyLink) {
+		return """
+				<!DOCTYPE html>
+				<html>
+				<head>
+				  <meta charset='UTF-8'>
+				  <title>信箱變更驗證</title>
+				</head>
+				<body style='font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 20px;'>
+				  <div style='background-color: #ffffff; padding: 20px; border-radius: 5px;'>
+				    <h2>親愛的會員您好：</h2>
+				    <p>您已申請變更註冊信箱，請點擊下方按鈕完成信箱驗證：</p>
+				    <div style='text-align: center; margin: 30px;'>
+				      <a href='%s' style='display: inline-block; padding: 10px 20px; background-color: #ffc107; color: white; text-decoration: none; border-radius: 5px;'>驗證新信箱</a>
+				    </div>
+				    <p style='color: #999;'>如果您未申請變更，請忽略此信件。</p>
+				  </div>
+				</body>
+				</html>
+				"""
+				.formatted(verifyLink);
+	}
+
+	// 重設密碼信 HTML 內容
+	private String getResetPasswordEmailContent(String resetLink) {
+		return """
+				<!DOCTYPE html>
+				<html>
+				<head>
+				  <meta charset='UTF-8'>
+				  <title>重設密碼通知</title>
+				</head>
+				<body style='font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 20px;'>
+				  <div style='background-color: #ffffff; padding: 20px; border-radius: 5px;'>
+				    <h2>親愛的會員您好：</h2>
+				    <p>我們收到您重設密碼的請求，請點擊下方按鈕設定新的密碼：</p>
+				    <div style='text-align: center; margin: 30px;'>
+				      <a href='%s' style='display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px;'>重設密碼</a>
+				    </div>
+				    <p style='color: #999;'>如果您沒有申請重設密碼，請忽略此信件。</p>
+				  </div>
+				</body>
+				</html>
+				"""
+				.formatted(resetLink);
+	}
+
+	// 會員登入
+	public Member login(String email, String password) {
+		Member member = memberRepository.findByEmail(email);
+
+		if (member == null) {
+			// 找不到這個email
 			return null;
 		}
-	}
-	
-	
-	
-	@Transactional
-	public Member updateMemberByEmp(Long id, Member updatedMember) {
-	    Optional<Member> optional = memberRepository.findById(id);
-	    if (optional.isPresent()) {
-	        Member originalMember = optional.get();
-	        originalMember.setName(updatedMember.getName());
-	        originalMember.setEmail(updatedMember.getEmail());
-	        originalMember.setPhoneNumber(updatedMember.getPhoneNumber());
-	        originalMember.setDateOfBirth(updatedMember.getDateOfBirth());
-	        originalMember.setGender(updatedMember.getGender());
-	        if (updatedMember.getPassword() != null && !updatedMember.getPassword().isBlank()) {
-	            String hashedPwd = pwdEncoder.encode(updatedMember.getPassword());
-	            originalMember.setPassword(hashedPwd);
-	        }
 
-	        return originalMember;
-	    } else {
-	        return null;
-	    }
+		// 比對密碼
+		boolean passwordMatch = pwdEncoder.matches(password, member.getPassword());
+		if (!passwordMatch) {
+			return null;
+		}
+
+		// 找到了且密碼正確，回傳member
+		return member;
 	}
 
-	
-	
-	public Member insertMember(Member member,String verifyCode) {
-		String originalPwd =  member.getPassword();
-		String hashedPwd = pwdEncoder.encode(originalPwd);
-		member.setPassword(hashedPwd);
-		member.setVerification(false);
-		member.setVerificationCode(verifyCode);
-		Member insertBean = memberRepository.save(member);
-		
-		
-		
-		
-		return insertBean;
-	}
-	
+	// 會員工具
+
+	// 檢查會員是否存在
 	public boolean memberExistCheck(Member member) {
 		String email = member.getEmail();
 		String phoneNumber = member.getPhoneNumber();
-		
-		System.out.println(email + " "+phoneNumber);
-		//檢查信箱&手機號碼是否已註冊
-		List<Member> existMembers = memberRepository.findByEmailOrPhoneNumber(email,phoneNumber);
-		if(!existMembers.isEmpty()) {
-			//已存在回傳false 不給註冊
+
+		System.out.println(email + " " + phoneNumber);
+		// 檢查信箱&手機號碼是否已註冊
+		List<Member> existMembers = memberRepository.findByEmailOrPhoneNumber(email, phoneNumber);
+		if (!existMembers.isEmpty()) {
+			// 已存在回傳false 不給註冊
 			return false;
-		}else {
-			//未存在回傳true 表示允許註冊
+		} else {
+			// 未存在回傳true 表示允許註冊
 			return true;
 		}
-		
+
 	}
-	
-	public Member login(String email,String originalPwd) {
+
+	@Transactional
+	public String verifyMember(String code) {
+		Member member = memberRepository.findByOriginEmailCode(code);
+
+		if (member == null) {
+			return "error"; // 找不到這個驗證碼
+		}
+
+		if (member.isVerification()) {
+			return "already_verified"; // 已經啟用了
+		}
+
+		// 激活會員
+		member.setVerification(true);
+		member.setOriginEmailCode(null); // 成功後清掉驗證碼避免重複使用
+		memberRepository.save(member);
+
+		return "success";
+	}
+
+	public Member findByEmail(String email) {
+		return memberRepository.findByEmail(email);
+	}
+
+//	密碼變更
+	@Transactional
+	public void sendResetPasswordEmail(String email) throws MessagingException {
 		Member member = memberRepository.findByEmail(email);
-		if(member!=null) {
-			boolean result = pwdEncoder.matches(originalPwd, member.getPassword());
-		
-			if(result) {
-				return member;
-			}
+		if (member == null) {
+			throw new RuntimeException("查無此信箱");
 		}
-		return null;
 
+		String resetCode = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 5).toUpperCase();
+
+		member.setResetPasswordCode(resetCode);
+		memberRepository.save(member);
+
+		String resetLink = "http://localhost:8080/member/resetPassword?email=" + member.getEmail() + "&code="
+				+ resetCode;
+
+		sendResetEmail(member.getEmail(), resetLink);
 	}
-	public List<Member> findByPhoneNumberContaining(String phoneNumber) {
-		List<Member> members = memberRepository.findByPhoneNumberContaining(phoneNumber);
-		if (members!=null) {
-			return members;
-		}
-		return null;
-		
-	}
-	
-	public List<Member> findByEmailContaining(String email) {
-		List<Member> members = memberRepository.findByEmailContaining(email);
-		if (members!=null) {
-			return members;
-		}
-		return null;
-		
-	}
-	
-	public List<Member> findByNationalIdContaining(String nationalId) {
-		List<Member> members = memberRepository.findByNationalIdContaining(nationalId);
-		if (members!=null) {
-			return members;
-		}
-		return null;
-		
-	}
-	
-	public Member findById(Long id) {
-		Optional<Member> optional = memberRepository.findById(id);
-		if (optional.isPresent()) {
-			Member member = optional.get();
-			return member;
-		}
-		return null;
-		
-	}
-	
-	public List<Member> findAll() {
-		List<Member> members = memberRepository.findAll();
-		if (!members.isEmpty()) {
-			return members;
-		}
-		return null;
-		
+
+	private void sendResetEmail(String toEmail, String link) throws MessagingException {
+		String subject = "重設密碼 - 光影之門";
+		String content = """
+				親愛的會員您好：<br>
+				請點選以下連結重設您的密碼：<br>
+				<a href='%s'>點我重設密碼</a><br><br>
+				如果您沒有提出此要求，請忽略本郵件。
+				""".formatted(link);
+
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+		helper.setTo(toEmail);
+		helper.setSubject(subject);
+		helper.setText(content, true);
+
+		mailSender.send(message);
 	}
 
 	@Transactional
-	public boolean deleteMemberById(Long id) {
-		 if (memberRepository.existsById(id)) {
-				memberRepository.deleteById(id);
-				return true;
-		    } else {
-		        return false;
-		    }
+	public void resetPassword(String newPassword, String email, String code) {
+		Member member = memberRepository.findByEmailAndResetPasswordCode(email, code);
+		if (member == null) {
+			throw new RuntimeException("連結已失效或無效");
+		}
+
+		member.setPassword(pwdEncoder.encode(newPassword)); // 建議加密，例如使用 BCrypt
+		member.setResetPasswordCode(null); // 清除使用過的 reset code
+		memberRepository.save(member);
 	}
-	
-	public void sendVerificationEmail(String Toemail,String verifyLink)throws MessagingException {
-		 String subject = "會員註冊驗證信 - 光影之門";
-		    String content = """
-		        親愛的會員您好：<br>
-		        請點選以下連結完成帳號啟用：<br>
-		        <a href="%s">點我驗證</a>
-		        <br><br>
-		        如果您未註冊，請忽略這封信。
-		        """.formatted(verifyLink);
-		    MimeMessage message = mailSender.createMimeMessage();
-	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-	        helper.setTo(Toemail);
-	        helper.setSubject(subject);
-	        helper.setText(content, true); // 第二個參數 true 表示啟用 HTML
-	        mailSender.send(message);
-	        System.out.println("送出成功"+message);
-	}
-	
+
+	/**
+	 * 要求變更信箱：寄出驗證信
+	 */
 	@Transactional
-	public boolean verifyMessage(String code) {
-	    Member member = memberRepository.findByVerificationCode(code);
-	    if (member == null || member.isVerification()) {
-	        return false;
-	    }
-	    member.setVerification(true);
-	    member.setVerificationCode(null); // 清除驗證碼
-	    memberRepository.save(member);
-	    return true;
+	public void requestChangeEmail(Long memberId, String newEmail) throws MessagingException {
+		Member member = memberRepository.findById(memberId).orElse(null);
+		if (member == null) {
+			throw new RuntimeException("會員不存在！");
+		}
+
+		String changeEmailCode = UUID.randomUUID().toString().replace("-", "").substring(0, 5).toUpperCase();
+		member.setNewEmail(newEmail);
+		member.setNewEmailCode(changeEmailCode);
+		memberRepository.save(member);
+
+		String verifyLink = "http://localhost:8080/member/confirmNewEmail?code=" + changeEmailCode;
+		mailService.sendHtmlEmail(newEmail, "變更信箱驗證 - 光影之門", buildChangeEmailContent(verifyLink));
 	}
+
+	/**
+	 * 確認變更信箱
+	 */
 	@Transactional
-	public void EmailChange(Member member,String newEmail) throws MessagingException {
-		String token = UUID.randomUUID().toString().replace("-", "");
-	    member.setNewEmail(newEmail);
-	    member.setVerificationCode(token);	    
-	    memberRepository.save(member);
-	    
-	    
-	    
-	    String verifyLink = "http://localhost:8080/member/email/confirm?code=" + token;
-	    String subject = "會員變更信箱 - 光影之門";
-	    String content = """
-	        親愛的會員您好：<br>
-	        請點選以下連結完成新信箱：<br>
-	        <a href="%s">點我驗證</a>
-	        """.formatted(verifyLink);
-	    MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        helper.setTo(member.getEmail());
-        helper.setSubject(subject);
-        helper.setText(content, true); // 第二個參數 true 表示啟用 HTML
-	    
-	}
-	@Transactional
-	public boolean newEmailConfirm(Model model,String code) {
-		 Member member = memberRepository.findByVerificationCode(code);
-		    if (member == null || member.getNewEmail() == null) {
-		        return false;
-		    }else {
-		    	// 執行變更信箱
-		    	member.setEmail(member.getNewEmail());
-		    	member.setNewEmail(null);
-		    	member.setVerificationCode(null);
-		    	memberRepository.save(member);
-		    	return true;
-		    }
-	}
-	
-	@Transactional
-	public void registerMemberByEmp(Member member) {
-	    member.setPassword(pwdEncoder.encode(member.getPassword()));
-	    memberRepository.save(member);
-	}
-	
-	public Member findByIdByEmp(Long id) {
-	    return memberRepository.findById(id).orElseThrow(() -> new RuntimeException("找不到會員"));
-	}
-	
-	
-	@Transactional
-	public void updateMemberByEmp(Member updatedMember) {
-	    Member original = memberRepository.findById(updatedMember.getMemberId())
-	            .orElseThrow(() -> new RuntimeException("找不到會員"));
+	public String confirmChangeEmail(String code) {
+		Member member = memberRepository.findByNewEmailCode(code);
+		if (member == null) {
+			return "驗證失敗或連結已過期！";
+		}
 
-	    // 欄位逐一更新（可選擇只更新允許項目）
-	    original.setName(updatedMember.getName());
-	    original.setEmail(updatedMember.getEmail());
-	    original.setPhoneNumber(updatedMember.getPhoneNumber());
-	    original.setGender(updatedMember.getGender());
-	    original.setDateOfBirth(updatedMember.getDateOfBirth());
-
-	    memberRepository.save(original);
-	}
-	
-	
-//	管理員手動寄送驗證碼
-	public void sendVerificationEmailById(Long memberId) throws MessagingException {
-	    Member member = memberRepository.findById(memberId)
-	        .orElseThrow(() -> new RuntimeException("找不到會員"));
-
-	    String code = UUID.randomUUID().toString().replace("-", "");
-	    member.setVerificationCode(code);
-	    memberRepository.save(member);
-
-	    String verifyLink = "http://localhost:8080/member/verify?code=" + code;
-	    sendVerificationEmail(member.getEmail(), verifyLink);
-	}
-	
-//	後台欄位搜尋會員
-	public List<Member> searchByName(String keyword) {
-	    return memberRepository.findByNameContainingIgnoreCase(keyword);
+		member.setEmail(member.getNewEmail());
+		member.setNewEmail(null);
+		member.setNewEmailCode(null);
+		memberRepository.save(member);
+		return "信箱變更成功！";
 	}
 
-	public List<Member> searchByEmail(String keyword) {
-	    return memberRepository.findByEmailContainingIgnoreCase(keyword);
+	private String buildChangeEmailContent(String link) {
+		return """
+				親愛的會員您好，<br>
+				您申請了變更電子郵件地址，請點選以下連結完成驗證：<br>
+				<a href="%s">點此驗證新信箱</a><br>
+				若不是您本人操作，請忽略本信件。
+				""".formatted(link);
 	}
 
-	public List<Member> searchByPhone(String keyword) {
-	    return memberRepository.findByPhoneNumberContaining(keyword);
-	}
+	// 前台更新會員資料
+    @Transactional
+    public void updateMemberProfile(Long memberId, String name, String dateOfBirth, String gender,String nationalId) {
+        Member member = findById(memberId);
+        member.setName(name);
+        member.setDateOfBirth(dateOfBirth);
+        member.setGender(gender);
+        member.setNationalId(nationalId);
 
+        memberRepository.save(member);
+    }
+    
+    
+    //後台更新會員資料
+    @Transactional
+    public void updateMemberByEmp(Long memberId, String name, String gender, String email, String phoneNumber, String dateOfBirth) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("查無此會員"));
+        member.setName(name);
+        member.setGender(gender);
+        member.setEmail(email);
+        member.setPhoneNumber(phoneNumber);
+        member.setDateOfBirth(dateOfBirth);
+        memberRepository.save(member);
+    }
+    
+    public MemberType findDefaultMemberType() {
+        // 你可以這樣設計，例如找 typeName = '普通會員'
+        return memberTypeRepository.findByTypeName("一般會員")
+            .orElseThrow(() -> new RuntimeException("找不到預設會員身份"));
+    }
 }
